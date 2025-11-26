@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+/* Material Symbols Icon Settings */
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+
+/* Noisy Gradient Effect */
+.noisy-gradient {
+  background-image: linear-gradient(90deg, #7F00FF, #00BFFF), 
+    url(https://lh3.googleusercontent.com/aida-public/AB6AXuCEFfhkwOfRB8mMgR0SdbQpp2SD6NTAxdMUPFfee7gZksDDLOuWM1t89Uii9z7x9tzBSKULAkEGKD1N4O-KanwqM6wLZ0qWLrjFkc7c_YbMG4YaK6nd0iD4VJM20yOlQrx8c_AA24q8J7E9k8DA3oxXT5vmA6vSqC9Yslv285720-rs8l6rb-hDV_xlMLBqUPb7rtmz7HUq5fEOYCo8kwkSYCn5BguD0MH6a08Is0upTQkSWOl2BPBmQlln_fvk3v2XzRCmYJ_lEcc);
+  background-blend-mode: screen;
+  opacity: 0.9;
+  transition: all 0.3s ease;
+}
+
+.noisy-gradient:hover {
+  opacity: 1;
+}
+
+/* Alternative Noisy Gradient for Centered Layout (radial version) */
+.noisy-gradient-radial {
+  background-image: radial-gradient(circle at top left, #8A2BE2, transparent), 
+    radial-gradient(circle at bottom right, #0FF, transparent), 
+    url(https://lh3.googleusercontent.com/aida-public/AB6AXuCEFfhkwOfRB8mMgR0SdbQpp2SD6NTAxdMUPFfee7gZksDDLOuWM1t89Uii9z7x9tzBSKULAkEGKD1N4O-KanwqM6wLZ0qWLrjFkc7c_YbMG4YaK6nd0iD4VJM20yOlQrx8c_AA24q8J7E9k8DA3oxXT5vmA6vSqC9Yslv285720-rs8l6rb-hDV_xlMLBqUPb7rtmz7HUq5fEOYCo8kwkSYCn5BguD0MH6a08Is0upTQkSWOl2BPBmQlln_fvk3v2XzRCmYJ_lEcc);
+  background-blend-mode: color-dodge;
+  background-size: 150% 150%, 150% 150%, 200px 200px;
+  background-position: -20% -20%, 120% 120%, 0 0;
+  transition: background-position 0.4s ease-in-out;
+}
+
+.noisy-gradient-radial:hover {
+  background-position: 0% 0%, 100% 100%, 0 0;
+}
+
+/* Toast Animation */
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+/* Body Styles */
+body {
+  font-family: 'Space Grotesk', sans-serif;
+}
