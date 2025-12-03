@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import Icon from '../atoms/Icon';
 import { useAsignaturas } from '../../hooks/useAsignaturas';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const EditTeacherModal = ({ teacher, onClose, onSave }) => {
+  const { t } = useLanguage();
   const [nombre, setNombre] = useState('');
   const [selectedAsignaturas, setSelectedAsignaturas] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -20,7 +22,8 @@ const EditTeacherModal = ({ teacher, onClose, onSave }) => {
 
   useEffect(() => {
     fetchAsignaturas();
-  }, [fetchAsignaturas]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,7 +62,7 @@ const EditTeacherModal = ({ teacher, onClose, onSave }) => {
             <div className="flex size-10 items-center justify-center rounded-full bg-primary/20">
               <Icon name="edit" className="text-primary text-xl" />
             </div>
-            <h2 className="text-xl font-bold text-white">Edit Teacher</h2>
+            <h2 className="text-xl font-bold text-white">{t('teachers.modal.editTitle')}</h2>
           </div>
           <button
             onClick={onClose}
@@ -75,7 +78,7 @@ const EditTeacherModal = ({ teacher, onClose, onSave }) => {
             {/* Teacher Name */}
             <div>
               <label className="text-white text-sm font-medium mb-2 block">
-                Full Name *
+                {t('teachers.form.fullName')} *
               </label>
               <input
                 type="text"
@@ -90,10 +93,10 @@ const EditTeacherModal = ({ teacher, onClose, onSave }) => {
             {/* Competencies Selection */}
             <div>
               <label className="text-white text-sm font-medium mb-2 block">
-                Teaching Competencies (Subjects)
+                {t('teachers.form.competencies')}
               </label>
               <p className="text-[#a19cba] text-xs mb-3">
-                Select the subjects this teacher is qualified to teach
+                {t('teachers.form.selectCompetencies')}
               </p>
               
               {loadingAsignaturas ? (
@@ -103,7 +106,7 @@ const EditTeacherModal = ({ teacher, onClose, onSave }) => {
               ) : asignaturas.length === 0 ? (
                 <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                   <p className="text-[#a19cba] text-sm text-center">
-                    No subjects available
+                    {t('teachers.form.noSubjects')}
                   </p>
                 </div>
               ) : (
@@ -131,7 +134,7 @@ const EditTeacherModal = ({ teacher, onClose, onSave }) => {
               )}
               
               <div className="mt-2 text-sm text-[#a19cba]">
-                {selectedAsignaturas.length} subject(s) selected
+                {t('teachers.form.subjectsSelected', { count: selectedAsignaturas.length })}
               </div>
             </div>
           </div>
@@ -144,7 +147,7 @@ const EditTeacherModal = ({ teacher, onClose, onSave }) => {
               className="px-4 py-2 rounded-lg bg-white/5 text-white hover:bg-white/10 transition-colors"
               disabled={saving}
             >
-              Cancel
+              {t('teachers.modal.cancel')}
             </button>
             <button
               type="submit"
@@ -159,10 +162,10 @@ const EditTeacherModal = ({ teacher, onClose, onSave }) => {
               {saving ? (
                 <span className="flex items-center gap-2">
                   <Icon name="sync" className="animate-spin" />
-                  Saving...
+                  {t('teachers.modal.saving')}
                 </span>
               ) : (
-                'Save Changes'
+                t('teachers.modal.saveChanges')
               )}
             </button>
           </div>

@@ -1,0 +1,329 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "create": "Create",
+    "back": "Back",
+    "search": "Search",
+    "filter": "Filter",
+    "clear": "Clear",
+    "clearFilters": "Clear Filters",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "close": "Close",
+    "name": "Name",
+    "description": "Description",
+    "createdAt": "Created",
+    "updatedAt": "Updated",
+    "table": {
+      "created": "Created",
+      "actions": "Actions"
+    },
+    "actions": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "search": "Search"
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "studyPrograms": "Study Programs",
+    "subjects": "Subjects",
+    "teachers": "Teachers",
+    "groups": "Groups",
+    "students": "Students"
+  },
+  "home": {
+    "title": "Academic Management System",
+    "subtitle": "Comprehensive platform for managing programs, subjects, teachers, and students",
+    "stats": {
+      "totalGroups": "Total Groups",
+      "totalStudents": "Total Students",
+      "totalTeachers": "Total Teachers",
+      "totalSubjects": "Total Subjects"
+    },
+    "filters": {
+      "selectProgram": "Select Program",
+      "allPrograms": "All Programs",
+      "selectSemester": "Select Semester",
+      "allSemesters": "All Semesters",
+      "selectSubject": "Select Subject",
+      "allSubjects": "All Subjects"
+    },
+    "tabs": {
+      "groups": "Groups",
+      "teachers": "Teachers"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "managePrograms": "Manage Programs",
+      "manageSubjects": "Manage Subjects",
+      "manageTeachers": "Manage Teachers",
+      "manageGroups": "Manage Groups",
+      "manageStudents": "Manage Students"
+    },
+    "empty": {
+      "noData": "No data available",
+      "selectFilters": "Select filters to view information",
+      "selectSubject": "Select a subject to get started",
+      "noGroups": "No groups registered for this subject",
+      "noTeachers": "No teachers with competency in this subject"
+    },
+    "table": {
+      "groupName": "Group Name",
+      "teacher": "Teacher",
+      "students": "Students",
+      "createdDate": "Created Date",
+      "name": "Name",
+      "email": "Email",
+      "competencies": "Competencies"
+    },
+    "infoBox": {
+      "selectedSubject": "Selected Subject"
+    }
+  },
+  "studyPrograms": {
+    "title": "Study Programs Management",
+    "subtitle": "Manage academic study programs and curricula",
+    "createButton": "Create Program",
+    "stats": {
+      "totalPrograms": "Total Programs",
+      "totalSemesters": "Total Semesters",
+      "active": "Active"
+    },
+    "table": {
+      "title": "Registered Programs",
+      "program": "Program",
+      "semesters": "Cuatri",
+      "created": "Created"
+    },
+    "form": {
+      "title": "Create Study Program",
+      "programName": "Program Name",
+      "semesters": "Number of Semesters",
+      "selectSemesters": "Select number of semesters"
+    },
+    "messages": {
+      "deleteConfirm": "Delete study program?",
+      "deleteMessage": "Are you sure you want to delete the program \"{name}\"? This action cannot be undone.",
+      "deleteSuccess": "Study program deleted successfully",
+      "deleteError": "Error deleting study program",
+      "updateSuccess": "Program updated successfully",
+      "updateError": "Error updating program",
+      "createSuccess": "Program created successfully",
+      "createError": "Error creating program"
+    }
+  },
+  "subjects": {
+    "title": "Subjects Management",
+    "subtitle": "Manage academic subjects and courses",
+    "createButton": "Create Subject",
+    "stats": {
+      "totalSubjects": "Total Subjects",
+      "studyPrograms": "Study Programs",
+      "filteredResults": "Filtered Results"
+    },
+    "filters": {
+      "byProgram": "Filter by Program",
+      "bySemester": "Filter by Semester",
+      "allPrograms": "All Programs",
+      "allSemesters": "All Semesters",
+      "clear": "Clear Filters",
+      "showing": "Showing {count} of {total} subjects",
+      "semesterLabel": "{number} Semester"
+    },
+    "table": {
+      "title": "Registered Subjects",
+      "subject": "Subject",
+      "program": "Program",
+      "semester": "Semester",
+      "competency": "Competency",
+      "created": "Created"
+    },
+    "form": {
+      "title": "Create Subject",
+      "subjectName": "Subject Name",
+      "selectProgram": "Select Program",
+      "selectSemester": "Select Semester",
+      "competency": "Competency"
+    },
+    "competencies": {
+      "mathematics": "Mathematics",
+      "programming": "Programming",
+      "databases": "Databases",
+      "networks": "Networks",
+      "design": "Design",
+      "other": "Other"
+    },
+    "messages": {
+      "deleteConfirm": "Delete subject?",
+      "deleteMessage": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+      "deleteSuccess": "Subject deleted successfully",
+      "updateSuccess": "Subject updated successfully",
+      "createSuccess": "Subject created successfully",
+      "noResults": "No subjects match the selected filters.",
+      "noSubjects": "No subjects registered yet",
+      "createFirst": "Create First Subject"
+    },
+    "tooltips": {
+      "viewDetails": "View Details",
+      "editSubject": "Edit Subject",
+      "deleteSubject": "Delete Subject"
+    }
+  },
+  "teachers": {
+    "title": "Teachers Management",
+    "subtitle": "Manage teacher information and competencies",
+    "registerButton": "Register Teacher",
+    "stats": {
+      "totalTeachers": "Total Teachers",
+      "availableSubjects": "Available Subjects",
+      "totalCompetencies": "Total Competencies"
+    },
+    "table": {
+      "title": "Registered Teachers",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "competencies": "Competencies",
+      "subjectsCount": "{count} subjects"
+    },
+    "form": {
+      "title": "Register Teacher",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "competencies": "Teaching Competencies (Subjects)",
+      "selectCompetencies": "Select the subjects this teacher is qualified to teach",
+      "noSubjects": "No subjects available",
+      "subjectsSelected": "{count} subject(s) selected"
+    },
+    "messages": {
+      "deleteConfirm": {
+        "title": "Delete Teacher",
+        "message": "Are you sure you want to delete \"{name}\"? This action cannot be undone."
+      },
+      "deleteSuccess": "Teacher deleted successfully",
+      "updateSuccess": "Teacher updated successfully",
+      "registerSuccess": "Teacher registered successfully",
+      "noTeachers": "No teachers registered yet",
+      "registerFirst": "Register First Teacher"
+    },
+    "tooltips": {
+      "viewDetails": "View Details",
+      "editTeacher": "Edit",
+      "deleteTeacher": "Delete"
+    },
+    "modal": {
+      "editTitle": "Edit Teacher",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "cancel": "Cancel"
+    }
+  },
+  "groups": {
+    "title": "Groups Management",
+    "subtitle": "Manage groups, subjects, teachers and enrolled students",
+    "createButton": "Create Group",
+    "stats": {
+      "totalGroups": "Total Groups",
+      "enrolledStudents": "Enrolled Students",
+      "activeSubjects": "Active Subjects"
+    },
+    "table": {
+      "title": "Active Groups",
+      "group": "Group",
+      "subject": "Subject",
+      "teacher": "Teacher",
+      "students": "Students",
+      "created": "Created"
+    },
+    "form": {
+      "title": "Create Group",
+      "groupName": "Group Name",
+      "selectSubject": "Select Subject",
+      "selectTeacher": "Select Teacher",
+      "selectStudents": "Select Students",
+      "noTeachersAvailable": "No teachers available with required competency",
+      "teacherCompetencyWarning": "The selected teacher does not have the competency required for this subject"
+    },
+    "messages": {
+      "noGroups": "No groups created yet",
+      "createFirst": "Create First Group",
+      "deleteConfirm": {
+        "title": "Delete Group",
+        "message": "Are you sure you want to delete group \"{name}\"? This action cannot be undone."
+      },
+      "deleteSuccess": "Group deleted successfully",
+      "updateSuccess": "Group updated successfully",
+      "createSuccess": "Group created successfully"
+    }
+  },
+  "students": {
+    "title": "Students Management",
+    "subtitle": "Manage student registrations and enrollments",
+    "registerButton": "Register Student",
+    "stats": {
+      "totalStudents": "Total Students",
+      "activeEnrollments": "Active Enrollments",
+      "totalCourses": "Total Courses"
+    },
+    "table": {
+      "title": "Registered Students",
+      "name": "Name",
+      "enrollment": "Enrollment",
+      "semester": "Semester",
+      "created": "Created"
+    },
+    "filters": {
+      "searchByEnrollment": "Search by Enrollment",
+      "bySemester": "Filter by Semester",
+      "allSemesters": "All Semesters",
+      "clear": "Clear Filters",
+      "showing": "Showing {count} of {total} students",
+      "semesterLabel": "{number} Semester"
+    },
+    "messages": {
+      "deleteConfirm": {
+        "title": "Delete Student",
+        "message": "Are you sure you want to delete \"{name}\"? This action cannot be undone."
+      },
+      "deleteSuccess": "Student deleted successfully",
+      "updateSuccess": "Student updated successfully",
+      "registerSuccess": "Student registered successfully",
+      "noResults": "No students match the selected filters",
+      "noStudents": "No students registered yet",
+      "registerFirst": "Register First Student"
+    },
+    "tooltips": {
+      "viewDetails": "View Details",
+      "editStudent": "Edit Student",
+      "deleteStudent": "Delete Student"
+    },
+    "modal": {
+      "editTitle": "Edit Student",
+      "editSubtitle": "Update student information",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "cancel": "Cancel"
+    },
+    "form": {
+      "title": "Register Student",
+      "fullName": "Full Name",
+      "enrollment": "Enrollment",
+      "currentSemester": "Current Semester",
+      "selectSemester": "Select Semester"
+    }
+  }
+}

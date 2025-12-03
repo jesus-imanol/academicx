@@ -1,15 +1,18 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router';
 import Icon from '../components/atoms/Icon';
+import LanguageSelector from '../components/molecules/LanguageSelector';
 import { useProgramasEstudio } from '../hooks/useProgramasEstudio';
 import { useAsignaturas } from '../hooks/useAsignaturas';
 import { useGrupos } from '../hooks/useGrupos';
 import { useDocentes } from '../hooks/useDocentes';
 import { useAlumnos } from '../hooks/useAlumnos';
+import { useLanguage } from '../contexts/LanguageContext';
 
 function HomeView() {
     const [activeTab, setActiveTab] = useState('grupos');
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const { t } = useLanguage();
     const [filters, setFilters] = useState({
         programaId: '',
         cuatrimestre: '',
@@ -162,7 +165,7 @@ function HomeView() {
                                 className="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-white"
                             >
                                 <Icon name="dashboard" filled />
-                                <p className="text-sm font-medium leading-normal">Dashboard</p>
+                                <p className="text-sm font-medium leading-normal">{t('nav.home')}</p>
                             </Link>
                             <Link 
                                 to="/students/dashboard"
@@ -170,7 +173,7 @@ function HomeView() {
                                 className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 text-white/80 transition-colors"
                             >
                                 <Icon name="school" />
-                                <p className="text-sm font-medium leading-normal">Alumnos</p>
+                                <p className="text-sm font-medium leading-normal">{t('nav.students')}</p>
                             </Link>
                             <Link 
                                 to="/teachers/dashboard"
@@ -178,7 +181,7 @@ function HomeView() {
                                 className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 text-white/80 transition-colors"
                             >
                                 <Icon name="person" />
-                                <p className="text-sm font-medium leading-normal">Docentes</p>
+                                <p className="text-sm font-medium leading-normal">{t('nav.teachers')}</p>
                             </Link>
                             <Link 
                                 to="/groups/dashboard"
@@ -186,33 +189,37 @@ function HomeView() {
                                 className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 text-white/80 transition-colors"
                             >
                                 <Icon name="groups" />
-                                <p className="text-sm font-medium leading-normal">Grupos</p>
+                                <p className="text-sm font-medium leading-normal">{t('nav.groups')}</p>
                             </Link>
                             <Link 
-                                to="/subjects/dashboard"
+                                to="/subjects"
                                 onClick={() => setSidebarOpen(false)}
                                 className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 text-white/80 transition-colors"
                             >
+
                                 <Icon name="menu_book" />
-                                <p className="text-sm font-medium leading-normal">Asignaturas</p>
+                                <p className="text-sm font-medium leading-normal">{t('nav.subjects')}</p>
                             </Link>
                             <Link 
-                                to="/programs/dashboard"
+                                to="/study-programs"
                                 onClick={() => setSidebarOpen(false)}
                                 className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 text-white/80 transition-colors"
                             >
                                 <Icon name="account_tree" />
-                                <p className="text-sm font-medium leading-normal">Programas</p>
+                                <p className="text-sm font-medium leading-normal">{t('nav.studyPrograms')}</p>
                             </Link>
                         </nav>
                     </div>
                     <div className="flex flex-col gap-4">
-                        <Link 
+                        {/* Language Selector */}
+                        <LanguageSelector />
+                        
+                        <Link
                             to="/groups/create"
                             onClick={() => setSidebarOpen(false)}
                             className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity"
                         >
-                            <span className="truncate">Crear Grupo</span>
+                            <span className="truncate">{t('groups.createButton')}</span>
                         </Link>
                         <div className="flex flex-col gap-1">
                             <button 
@@ -223,7 +230,7 @@ function HomeView() {
                                 className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 text-white/80 transition-colors"
                             >
                                 <Icon name="refresh" />
-                                <p className="text-sm font-medium leading-normal">Limpiar Filtros</p>
+                                <p className="text-sm font-medium leading-normal">{t('common.clearFilters')}</p>
                             </button>
                         </div>
                     </div>
@@ -246,15 +253,15 @@ function HomeView() {
                     <header className="flex flex-col gap-3 sm:gap-4">
                         <div className="flex items-center justify-between gap-4">
                             <p className="text-white text-xl sm:text-2xl lg:text-4xl font-black leading-tight tracking-[-0.033em]">
-                                Academic Management System
+                                {t('home.title')}
                             </p>
                         </div>
                         <div className="flex flex-wrap items-center gap-2">
                             <Icon name="school" className="text-primary text-xl" />
                             <span className="text-white/80 text-sm sm:text-base font-medium">
                                 {filters.asignaturaId 
-                                    ? `${asignaturasFiltradas.find(a => a.id === filters.asignaturaId)?.nombre || 'Materia'}`
-                                    : 'Selecciona una materia para comenzar'}
+                                    ? `${asignaturasFiltradas.find(a => a.id === filters.asignaturaId)?.nombre || t('home.filters.selectSubject')}`
+                                    : t('home.empty.selectSubject')}
                             </span>
                         </div>
 
@@ -265,7 +272,7 @@ function HomeView() {
                                     <Icon name="groups" className="text-blue-400" />
                                 </div>
                                 <div>
-                                    <p className="text-white/60 text-xs">Grupos</p>
+                                    <p className="text-white/60 text-xs">{t('home.stats.totalGroups')}</p>
                                     <p className="text-white text-xl font-bold">{stats.totalGrupos}</p>
                                 </div>
                             </div>
@@ -274,7 +281,7 @@ function HomeView() {
                                     <Icon name="school" className="text-green-400" />
                                 </div>
                                 <div>
-                                    <p className="text-white/60 text-xs">Alumnos</p>
+                                    <p className="text-white/60 text-xs">{t('home.stats.totalStudents')}</p>
                                     <p className="text-white text-xl font-bold">{stats.totalAlumnos}</p>
                                 </div>
                             </div>
@@ -283,7 +290,7 @@ function HomeView() {
                                     <Icon name="person" className="text-purple-400" />
                                 </div>
                                 <div>
-                                    <p className="text-white/60 text-xs">Docentes</p>
+                                    <p className="text-white/60 text-xs">{t('home.stats.totalTeachers')}</p>
                                     <p className="text-white text-xl font-bold">{stats.totalDocentes}</p>
                                 </div>
                             </div>
@@ -292,7 +299,7 @@ function HomeView() {
                                     <Icon name="menu_book" className="text-cyan-400" />
                                 </div>
                                 <div>
-                                    <p className="text-white/60 text-xs">Asignaturas</p>
+                                    <p className="text-white/60 text-xs">{t('home.stats.totalSubjects')}</p>
                                     <p className="text-white text-xl font-bold">{stats.totalAsignaturas}</p>
                                 </div>
                             </div>
@@ -307,11 +314,11 @@ function HomeView() {
                                 value={filters.programaId}
                                 onChange={handleFilterChange}
                                 disabled={loadingProgramas}
-                                className="w-full bg-white/5 border border-white/10 text-white rounded-lg pl-4 pr-10 py-3 text-sm focus:ring-2 focus:ring-primary focus:border-primary appearance-none disabled:opacity-50"
+                                className="w-full bg-[#1d1b27] border border-white/20 text-white rounded-lg pl-4 pr-10 py-3 text-sm focus:ring-2 focus:ring-primary focus:border-primary appearance-none disabled:opacity-50 hover:border-white/30 transition-colors [&>option]:bg-[#1d1b27] [&>option]:text-white"
                             >
-                                <option value="">Todos los Programas</option>
+                                <option value="" className="bg-[#1d1b27] text-white">{t('home.filters.allPrograms')}</option>
                                 {programas.map(programa => (
-                                    <option key={programa.id} value={programa.id}>
+                                    <option key={programa.id} value={programa.id} className="bg-[#1d1b27] text-white">
                                         {programa.nombre}
                                     </option>
                                 ))}
@@ -324,11 +331,11 @@ function HomeView() {
                                 value={filters.cuatrimestre}
                                 onChange={handleFilterChange}
                                 disabled={!filters.programaId}
-                                className="w-full bg-white/5 border border-white/10 text-white rounded-lg pl-4 pr-10 py-3 text-sm focus:ring-2 focus:ring-primary focus:border-primary appearance-none disabled:opacity-50"
+                                className="w-full bg-[#1d1b27] border border-white/20 text-white rounded-lg pl-4 pr-10 py-3 text-sm focus:ring-2 focus:ring-primary focus:border-primary appearance-none disabled:opacity-50 hover:border-white/30 transition-colors [&>option]:bg-[#1d1b27] [&>option]:text-white"
                             >
-                                <option value="">Todos los Cuatrimestres</option>
+                                <option value="" className="bg-[#1d1b27] text-white">{t('home.filters.allSemesters')}</option>
                                 {cuatrimestresDisponibles.map(cuatri => (
-                                    <option key={cuatri} value={cuatri}>
+                                    <option key={cuatri} value={cuatri} className="bg-[#1d1b27] text-white">
                                         Cuatrimestre {cuatri}
                                     </option>
                                 ))}
@@ -341,11 +348,11 @@ function HomeView() {
                                 value={filters.asignaturaId}
                                 onChange={handleFilterChange}
                                 disabled={asignaturasFiltradas.length === 0}
-                                className="w-full bg-white/5 border border-white/10 text-white rounded-lg pl-4 pr-10 py-3 text-sm focus:ring-2 focus:ring-primary focus:border-primary appearance-none disabled:opacity-50"
+                                className="w-full bg-[#1d1b27] border border-white/20 text-white rounded-lg pl-4 pr-10 py-3 text-sm focus:ring-2 focus:ring-primary focus:border-primary appearance-none disabled:opacity-50 hover:border-white/30 transition-colors [&>option]:bg-[#1d1b27] [&>option]:text-white"
                             >
-                                <option value="">Selecciona una Materia</option>
+                                <option value="" className="bg-[#1d1b27] text-white">{t('home.filters.selectSubject')}</option>
                                 {asignaturasFiltradas.map(asignatura => (
-                                    <option key={asignatura.id} value={asignatura.id}>
+                                    <option key={asignatura.id} value={asignatura.id} className="bg-[#1d1b27] text-white">
                                         {asignatura.nombre}
                                     </option>
                                 ))}
@@ -363,10 +370,10 @@ function HomeView() {
                                 <div className="flex flex-col items-center justify-center bg-white/5 border border-white/10 rounded-xl p-12 text-center">
                                     <Icon name="filter_alt" className="text-white/30 text-6xl mb-4" />
                                     <p className="text-white text-lg font-semibold mb-2">
-                                        Selecciona una materia
+                                        {t('home.filters.selectSubject')}
                                     </p>
                                     <p className="text-white/60 text-sm max-w-md">
-                                        Utiliza los filtros superiores para seleccionar un programa, cuatrimestre y materia para ver grupos y docentes relacionados.
+                                        {t('home.empty.selectFilters')}
                                     </p>
                                 </div>
                             ) : (
@@ -383,7 +390,7 @@ function HomeView() {
                                                 }`}
                                             >
                                                 <p className="text-xs sm:text-sm font-bold leading-normal tracking-[0.015em]">
-                                                    Grupos ({datosFiltrados.grupos.length})
+                                                    {t('home.tabs.groups')} ({datosFiltrados.grupos.length})
                                                 </p>
                                             </button>
                                             <button
@@ -395,7 +402,7 @@ function HomeView() {
                                                 }`}
                                             >
                                                 <p className="text-xs sm:text-sm font-bold leading-normal tracking-[0.015em]">
-                                                    Docentes ({datosFiltrados.docentes.length})
+                                                    {t('home.tabs.teachers')} ({datosFiltrados.docentes.length})
                                                 </p>
                                             </button>
                                         </div>
@@ -406,17 +413,17 @@ function HomeView() {
                                                 <div className="px-6 py-12 text-center">
                                                     <Icon name="group_off" className="text-white/30 text-5xl mb-3 mx-auto" />
                                                     <p className="text-white/60 text-sm">
-                                                        No hay grupos registrados para esta materia
+                                                        {t('home.empty.noGroups')}
                                                     </p>
                                                 </div>
                                             ) : (
                                                 <table className="w-full text-xs sm:text-sm text-left text-white/80 min-w-[500px]">
                                                     <thead className="text-[10px] sm:text-xs text-white/60 uppercase">
                                                         <tr>
-                                                            <th className="px-4 sm:px-6 py-3" scope="col">Nombre Grupo</th>
-                                                            <th className="px-4 sm:px-6 py-3" scope="col">Docente</th>
-                                                            <th className="px-4 sm:px-6 py-3" scope="col">Alumnos</th>
-                                                            <th className="px-4 sm:px-6 py-3" scope="col">Fecha Creación</th>
+                                                            <th className="px-4 sm:px-6 py-3" scope="col">{t('home.table.groupName')}</th>
+                                                            <th className="px-4 sm:px-6 py-3" scope="col">{t('home.table.teacher')}</th>
+                                                            <th className="px-4 sm:px-6 py-3" scope="col">{t('home.table.students')}</th>
+                                                            <th className="px-4 sm:px-6 py-3" scope="col">{t('home.table.createdDate')}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -454,16 +461,16 @@ function HomeView() {
                                                 <div className="px-6 py-12 text-center">
                                                     <Icon name="person_off" className="text-white/30 text-5xl mb-3 mx-auto" />
                                                     <p className="text-white/60 text-sm">
-                                                        No hay docentes con competencia en esta materia
+                                                        {t('home.empty.noTeachers')}
                                                     </p>
                                                 </div>
                                             ) : (
                                                 <table className="w-full text-xs sm:text-sm text-left text-white/80 min-w-[500px]">
                                                     <thead className="text-[10px] sm:text-xs text-white/60 uppercase">
                                                         <tr>
-                                                            <th className="px-4 sm:px-6 py-3" scope="col">Nombre</th>
-                                                            <th className="px-4 sm:px-6 py-3" scope="col">Email</th>
-                                                            <th className="px-4 sm:px-6 py-3" scope="col">Competencias</th>
+                                                            <th className="px-4 sm:px-6 py-3" scope="col">{t('home.table.name')}</th>
+                                                            <th className="px-4 sm:px-6 py-3" scope="col">{t('home.table.email')}</th>
+                                                            <th className="px-4 sm:px-6 py-3" scope="col">{t('home.table.competencies')}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -498,7 +505,7 @@ function HomeView() {
                         {/* Action Panel */}
                         <div className="lg:col-span-1 bg-white/5 border border-white/10 rounded-xl p-4 sm:p-6 flex flex-col gap-4 sm:gap-6">
                             <h2 className="text-white text-base sm:text-lg font-bold leading-tight tracking-[-0.015em]">
-                                Acciones Rápidas
+                                {t('home.quickActions.title')}
                             </h2>
                             <div className="flex flex-col gap-3 sm:gap-4">
                                 <Link 
@@ -508,7 +515,7 @@ function HomeView() {
                                 >
                                     <div className="flex items-center gap-2 sm:gap-3">
                                         <Icon name="groups" className="text-blue-400 text-lg sm:text-xl" />
-                                        <span className="text-white font-medium text-xs sm:text-sm">Ver Grupos</span>
+                                        <span className="text-white font-medium text-xs sm:text-sm">{t('home.quickActions.manageGroups')}</span>
                                     </div>
                                     <Icon name="arrow_forward" className="text-white/50 group-hover:text-white transition-colors" />
                                 </Link>
@@ -520,7 +527,7 @@ function HomeView() {
                                 >
                                     <div className="flex items-center gap-2 sm:gap-3">
                                         <Icon name="add_circle" className="text-cyan-400 text-lg sm:text-xl" />
-                                        <span className="text-white font-medium text-xs sm:text-sm">Crear Grupo</span>
+                                        <span className="text-white font-medium text-xs sm:text-sm">{t('groups.createButton')}</span>
                                     </div>
                                     <Icon name="arrow_forward" className="text-white/50 group-hover:text-white transition-colors" />
                                 </Link>
@@ -532,7 +539,7 @@ function HomeView() {
                                 >
                                     <div className="flex items-center gap-2 sm:gap-3">
                                         <Icon name="school" className="text-green-400 text-lg sm:text-xl" />
-                                        <span className="text-white font-medium text-xs sm:text-sm">Gestionar Alumnos</span>
+                                        <span className="text-white font-medium text-xs sm:text-sm">{t('home.quickActions.manageStudents')}</span>
                                     </div>
                                     <Icon name="arrow_forward" className="text-white/50 group-hover:text-white transition-colors" />
                                 </Link>
@@ -544,31 +551,31 @@ function HomeView() {
                                 >
                                     <div className="flex items-center gap-2 sm:gap-3">
                                         <Icon name="person" className="text-purple-400 text-lg sm:text-xl" />
-                                        <span className="text-white font-medium text-xs sm:text-sm">Gestionar Docentes</span>
+                                        <span className="text-white font-medium text-xs sm:text-sm">{t('home.quickActions.manageTeachers')}</span>
                                     </div>
                                     <Icon name="arrow_forward" className="text-white/50 group-hover:text-white transition-colors" />
                                 </Link>
 
                                 <Link 
-                                    to="/subjects/dashboard"
+                                    to="/subjects"
                                     onClick={() => setSidebarOpen(false)}
                                     className="flex items-center justify-between w-full p-3 sm:p-4 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-all group"
                                 >
                                     <div className="flex items-center gap-2 sm:gap-3">
                                         <Icon name="menu_book" className="text-cyan-400 text-lg sm:text-xl" />
-                                        <span className="text-white font-medium text-xs sm:text-sm">Ver Asignaturas</span>
+                                        <span className="text-white font-medium text-xs sm:text-sm">{t('home.quickActions.manageSubjects')}</span>
                                     </div>
                                     <Icon name="arrow_forward" className="text-white/50 group-hover:text-white transition-colors" />
                                 </Link>
 
                                 <Link 
-                                    to="/programs/dashboard"
+                                    to="/study-programs"
                                     onClick={() => setSidebarOpen(false)}
                                     className="flex items-center justify-between w-full p-3 sm:p-4 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-all group"
                                 >
                                     <div className="flex items-center gap-2 sm:gap-3">
                                         <Icon name="account_tree" className="text-yellow-400 text-lg sm:text-xl" />
-                                        <span className="text-white font-medium text-xs sm:text-sm">Ver Programas</span>
+                                        <span className="text-white font-medium text-xs sm:text-sm">{t('home.quickActions.managePrograms')}</span>
                                     </div>
                                     <Icon name="arrow_forward" className="text-white/50 group-hover:text-white transition-colors" />
                                 </Link>
@@ -581,7 +588,7 @@ function HomeView() {
                                         <Icon name="info" className="text-blue-400 text-xl shrink-0" />
                                         <div>
                                             <p className="text-blue-400 text-xs font-semibold mb-1">
-                                                Materia Seleccionada
+                                                {t('home.infoBox.selectedSubject')}
                                             </p>
                                             <p className="text-white text-sm">
                                                 {asignaturasFiltradas.find(a => a.id === filters.asignaturaId)?.nombre}

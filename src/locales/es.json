@@ -1,0 +1,329 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "view": "Ver",
+    "create": "Crear",
+    "back": "Volver",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "clear": "Limpiar",
+    "clearFilters": "Limpiar Filtros",
+    "yes": "Sí",
+    "no": "No",
+    "confirm": "Confirmar",
+    "close": "Cerrar",
+    "name": "Nombre",
+    "description": "Descripción",
+    "createdAt": "Creado",
+    "updatedAt": "Actualizado",
+    "table": {
+      "created": "Creado",
+      "actions": "Acciones"
+    },
+    "actions": {
+      "view": "Ver",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "cancel": "Cancelar",
+      "search": "Buscar"
+    }
+  },
+  "nav": {
+    "home": "Inicio",
+    "studyPrograms": "Programas de Estudio",
+    "subjects": "Asignaturas",
+    "teachers": "Docentes",
+    "groups": "Grupos",
+    "students": "Estudiantes"
+  },
+  "home": {
+    "title": "Sistema de Gestión Académica",
+    "subtitle": "Plataforma integral para gestionar programas, asignaturas, docentes y estudiantes",
+    "stats": {
+      "totalGroups": "Grupos Totales",
+      "totalStudents": "Estudiantes Totales",
+      "totalTeachers": "Docentes Totales",
+      "totalSubjects": "Asignaturas Totales"
+    },
+    "filters": {
+      "selectProgram": "Seleccionar Programa",
+      "allPrograms": "Todos los Programas",
+      "selectSemester": "Seleccionar Cuatrimestre",
+      "allSemesters": "Todos los Cuatrimestres",
+      "selectSubject": "Seleccionar Asignatura",
+      "allSubjects": "Todas las Asignaturas"
+    },
+    "tabs": {
+      "groups": "Grupos",
+      "teachers": "Docentes"
+    },
+    "quickActions": {
+      "title": "Acciones Rápidas",
+      "managePrograms": "Gestionar Programas",
+      "manageSubjects": "Gestionar Asignaturas",
+      "manageTeachers": "Gestionar Docentes",
+      "manageGroups": "Gestionar Grupos",
+      "manageStudents": "Gestionar Estudiantes"
+    },
+    "empty": {
+      "noData": "No hay datos disponibles",
+      "selectFilters": "Utiliza los filtros superiores para seleccionar un programa, cuatrimestre y materia para ver grupos y docentes relacionados",
+      "selectSubject": "Selecciona una materia para comenzar",
+      "noGroups": "No hay grupos registrados para esta materia",
+      "noTeachers": "No hay docentes con competencia en esta materia"
+    },
+    "table": {
+      "groupName": "Nombre Grupo",
+      "teacher": "Docente",
+      "students": "Alumnos",
+      "createdDate": "Fecha Creación",
+      "name": "Nombre",
+      "email": "Email",
+      "competencies": "Competencias"
+    },
+    "infoBox": {
+      "selectedSubject": "Materia Seleccionada"
+    }
+  },
+  "studyPrograms": {
+    "title": "Gestión de Programas de Estudio",
+    "subtitle": "Administra programas de estudio académicos y planes de estudio",
+    "createButton": "Crear Programa",
+    "stats": {
+      "totalPrograms": "Programas Totales",
+      "totalSemesters": "Cuatrimestres Totales",
+      "active": "Activos"
+    },
+    "table": {
+      "title": "Programas Registrados",
+      "program": "Programa",
+      "semesters": "Cuatri",
+      "created": "Creado"
+    },
+    "form": {
+      "title": "Crear Programa de Estudio",
+      "programName": "Nombre del Programa",
+      "semesters": "Número de Cuatrimestres",
+      "selectSemesters": "Selecciona número de cuatrimestres"
+    },
+    "messages": {
+      "deleteConfirm": "¿Eliminar programa de estudio?",
+      "deleteMessage": "¿Estás seguro de eliminar el programa \"{name}\"? Esta acción no se puede deshacer.",
+      "deleteSuccess": "Programa de estudio eliminado exitosamente",
+      "deleteError": "Error al eliminar programa de estudio",
+      "updateSuccess": "Programa actualizado exitosamente",
+      "updateError": "Error al actualizar programa",
+      "createSuccess": "Programa creado exitosamente",
+      "createError": "Error al crear programa"
+    }
+  },
+  "subjects": {
+    "title": "Gestión de Asignaturas",
+    "subtitle": "Administra asignaturas y cursos académicos",
+    "createButton": "Crear Asignatura",
+    "stats": {
+      "totalSubjects": "Asignaturas Totales",
+      "studyPrograms": "Programas de Estudio",
+      "filteredResults": "Resultados Filtrados"
+    },
+    "filters": {
+      "byProgram": "Filtrar por Programa",
+      "bySemester": "Filtrar por Cuatrimestre",
+      "allPrograms": "Todos los Programas",
+      "allSemesters": "Todos los Cuatrimestres",
+      "clear": "Limpiar Filtros",
+      "showing": "Mostrando {count} de {total} asignaturas",
+      "semesterLabel": "{number}° Cuatrimestre"
+    },
+    "table": {
+      "title": "Asignaturas Registradas",
+      "subject": "Asignatura",
+      "program": "Programa",
+      "semester": "Cuatrimestre",
+      "competency": "Competencia",
+      "created": "Creado"
+    },
+    "form": {
+      "title": "Crear Asignatura",
+      "subjectName": "Nombre de la Asignatura",
+      "selectProgram": "Seleccionar Programa",
+      "selectSemester": "Seleccionar Cuatrimestre",
+      "competency": "Competencia"
+    },
+    "competencies": {
+      "mathematics": "Matemáticas",
+      "programming": "Programación",
+      "databases": "Bases de Datos",
+      "networks": "Redes",
+      "design": "Diseño",
+      "other": "Otra"
+    },
+    "messages": {
+      "deleteConfirm": "¿Eliminar asignatura?",
+      "deleteMessage": "¿Estás seguro de eliminar \"{name}\"? Esta acción no se puede deshacer.",
+      "deleteSuccess": "Asignatura eliminada exitosamente",
+      "updateSuccess": "Asignatura actualizada exitosamente",
+      "createSuccess": "Asignatura creada exitosamente",
+      "noResults": "No hay asignaturas que coincidan con los filtros seleccionados.",
+      "noSubjects": "No hay asignaturas registradas aún",
+      "createFirst": "Crear Primera Asignatura"
+    },
+    "tooltips": {
+      "viewDetails": "Ver Detalles",
+      "editSubject": "Editar Asignatura",
+      "deleteSubject": "Eliminar Asignatura"
+    }
+  },
+  "teachers": {
+    "title": "Gestión de Docentes",
+    "subtitle": "Administra información y competencias de docentes",
+    "registerButton": "Registrar Docente",
+    "stats": {
+      "totalTeachers": "Docentes Totales",
+      "availableSubjects": "Asignaturas Disponibles",
+      "totalCompetencies": "Competencias Totales"
+    },
+    "table": {
+      "title": "Docentes Registrados",
+      "name": "Nombre",
+      "email": "Correo",
+      "phone": "Teléfono",
+      "competencies": "Competencias",
+      "subjectsCount": "{count} asignaturas"
+    },
+    "form": {
+      "title": "Registrar Docente",
+      "firstName": "Nombre",
+      "lastName": "Apellidos",
+      "fullName": "Nombre Completo",
+      "email": "Correo Electrónico",
+      "phone": "Teléfono",
+      "competencies": "Competencias Docentes (Asignaturas)",
+      "selectCompetencies": "Selecciona las asignaturas que este docente está calificado para enseñar",
+      "noSubjects": "No hay asignaturas disponibles",
+      "subjectsSelected": "{count} asignatura(s) seleccionada(s)"
+    },
+    "messages": {
+      "deleteConfirm": {
+        "title": "¿Eliminar Docente?",
+        "message": "¿Estás seguro de eliminar a \"{name}\"? Esta acción no se puede deshacer."
+      },
+      "deleteSuccess": "Docente eliminado exitosamente",
+      "updateSuccess": "Docente actualizado exitosamente",
+      "registerSuccess": "Docente registrado exitosamente",
+      "noTeachers": "No hay docentes registrados aún",
+      "registerFirst": "Registrar Primer Docente"
+    },
+    "tooltips": {
+      "viewDetails": "Ver Detalles",
+      "editTeacher": "Editar",
+      "deleteTeacher": "Eliminar"
+    },
+    "modal": {
+      "editTitle": "Editar Docente",
+      "saveChanges": "Guardar Cambios",
+      "saving": "Guardando...",
+      "cancel": "Cancelar"
+    }
+  },
+  "groups": {
+    "title": "Gestión de Grupos",
+    "subtitle": "Administra grupos, asignaturas, docentes y estudiantes inscritos",
+    "createButton": "Crear Grupo",
+    "stats": {
+      "totalGroups": "Grupos Totales",
+      "enrolledStudents": "Estudiantes Inscritos",
+      "activeSubjects": "Asignaturas Activas"
+    },
+    "table": {
+      "title": "Grupos Activos",
+      "group": "Grupo",
+      "subject": "Asignatura",
+      "teacher": "Docente",
+      "students": "Estudiantes",
+      "created": "Creado"
+    },
+    "form": {
+      "title": "Crear Grupo",
+      "groupName": "Nombre del Grupo",
+      "selectSubject": "Seleccionar Asignatura",
+      "selectTeacher": "Seleccionar Docente",
+      "selectStudents": "Seleccionar Estudiantes",
+      "noTeachersAvailable": "No hay docentes disponibles con la competencia requerida",
+      "teacherCompetencyWarning": "El docente seleccionado no tiene la competencia requerida para esta asignatura"
+    },
+    "messages": {
+      "noGroups": "No hay grupos creados aún",
+      "createFirst": "Crear Primer Grupo",
+      "deleteConfirm": {
+        "title": "¿Eliminar Grupo?",
+        "message": "¿Estás seguro de eliminar el grupo \"{name}\"? Esta acción no se puede deshacer."
+      },
+      "deleteSuccess": "Grupo eliminado exitosamente",
+      "updateSuccess": "Grupo actualizado exitosamente",
+      "createSuccess": "Grupo creado exitosamente"
+    }
+  },
+  "students": {
+    "title": "Gestión de Estudiantes",
+    "subtitle": "Administra registros e inscripciones de estudiantes",
+    "registerButton": "Registrar Estudiante",
+    "stats": {
+      "totalStudents": "Estudiantes Totales",
+      "activeEnrollments": "Inscripciones Activas",
+      "totalCourses": "Cursos Totales"
+    },
+    "table": {
+      "title": "Estudiantes Registrados",
+      "name": "Nombre",
+      "enrollment": "Matrícula",
+      "semester": "Cuatrimestre",
+      "created": "Creado"
+    },
+    "filters": {
+      "searchByEnrollment": "Buscar por Matrícula",
+      "bySemester": "Filtrar por Cuatrimestre",
+      "allSemesters": "Todos los Cuatrimestres",
+      "clear": "Limpiar Filtros",
+      "showing": "Mostrando {count} de {total} estudiantes",
+      "semesterLabel": "{number}° Cuatrimestre"
+    },
+    "messages": {
+      "deleteConfirm": {
+        "title": "¿Eliminar Estudiante?",
+        "message": "¿Estás seguro de eliminar a \"{name}\"? Esta acción no se puede deshacer."
+      },
+      "deleteSuccess": "Estudiante eliminado exitosamente",
+      "updateSuccess": "Estudiante actualizado exitosamente",
+      "registerSuccess": "Estudiante registrado exitosamente",
+      "noResults": "No hay estudiantes que coincidan con los filtros seleccionados",
+      "noStudents": "No hay estudiantes registrados aún",
+      "registerFirst": "Registrar Primer Estudiante"
+    },
+    "tooltips": {
+      "viewDetails": "Ver Detalles",
+      "editStudent": "Editar Estudiante",
+      "deleteStudent": "Eliminar Estudiante"
+    },
+    "modal": {
+      "editTitle": "Editar Estudiante",
+      "editSubtitle": "Actualiza la información del estudiante",
+      "saveChanges": "Guardar Cambios",
+      "saving": "Guardando...",
+      "cancel": "Cancelar"
+    },
+    "form": {
+      "title": "Registrar Estudiante",
+      "fullName": "Nombre Completo",
+      "enrollment": "Matrícula",
+      "currentSemester": "Cuatrimestre Actual",
+      "selectSemester": "Seleccionar Cuatrimestre"
+    }
+  }
+}

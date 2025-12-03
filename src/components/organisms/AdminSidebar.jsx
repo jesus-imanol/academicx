@@ -1,20 +1,34 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import Icon from '../atoms/Icon';
+import LanguageSelector from '../molecules/LanguageSelector';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const AdminSidebar = ({ activeItem = 'dashboard' }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const { t } = useLanguage();
+  const navigate = useNavigate();
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const closeSidebar = () => setIsOpen(false);
+
+  const handleLogout = () => {
+    // Aquí puedes agregar lógica de logout (limpiar tokens, etc.)
+    localStorage.clear();
+    sessionStorage.clear();
+    setShowLogoutModal(false);
+    navigate('/login');
+  };
+
   const navItems = [
-    { id: 'dashboard', icon: 'dashboard', label: 'Dashboard', href: '/' },
-    { id: 'students', icon: 'person', label: 'Students', href: '/students/dashboard' },
-    { id: 'study-programs', icon: 'school', label: 'Study Programs', href: '/study-programs' },
-    { id: 'subjects', icon: 'import_contacts', label: 'Subjects', href: '/subjects' },
-    { id: 'groups', icon: 'group', label: 'Groups', href: '/groups/dashboard', filled: true },
-    { id: 'teachers', icon: 'school', label: 'Teachers', href: '/teachers/dashboard' }
+    { id: 'dashboard', icon: 'dashboard', label: t('nav.home'), href: '/' },
+    { id: 'students', icon: 'person', label: t('nav.students'), href: '/students/dashboard' },
+    { id: 'study-programs', icon: 'school', label: t('nav.studyPrograms'), href: '/study-programs' },
+    { id: 'subjects', icon: 'import_contacts', label: t('nav.subjects'), href: '/subjects' },
+    { id: 'groups', icon: 'group', label: t('nav.groups'), href: '/groups/dashboard', filled: true },
+    { id: 'teachers', icon: 'school', label: t('nav.teachers'), href: '/teachers/dashboard' }
   ];
 
   return (
@@ -89,6 +103,9 @@ const AdminSidebar = ({ activeItem = 'dashboard' }) => {
 
         {/* Bottom Section */}
         <div className="flex flex-col gap-4">
+          {/* Language Selector */}
+          <LanguageSelector />
+          
           <Link
             to="/study-programs/create"
             onClick={closeSidebar}
@@ -101,23 +118,58 @@ const AdminSidebar = ({ activeItem = 'dashboard' }) => {
             <Link
               to="/admin/settings"
               onClick={closeSidebar}
-              className="flex items-center gap-3 px-3 py-2 text-[#a19cba] hover:bg-[#2b2839] hover:text-white transition-colors duration-200"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg text-[#a19cba] hover:bg-white/5 hover:text-white transition-colors duration-200"
             >
               <Icon name="settings" />
               <p className="text-sm font-medium leading-normal">Settings</p>
             </Link>
-            <Link
-              to="/logout"
-              onClick={closeSidebar}
-              className="flex items-center gap-3 px-3 py-2 text-[#a19cba] hover:bg-[#2b2839] hover:text-white transition-colors duration-200"
+            <button
+              onClick={() => setShowLogoutModal(true)}
+              className="flex items-center gap-3 px-3 py-2 rounded-lg text-[#a19cba] hover:bg-red-500/10 hover:text-red-400 transition-colors duration-200 w-full text-left"
             >
               <Icon name="logout" />
               <p className="text-sm font-medium leading-normal">Logout</p>
-            </Link>
+            </button>
           </div>
         </div>
       </div>
     </aside>
+
+    {/* Logout Confirmation Modal */}
+    {showLogoutModal && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="bg-[#1a2744] border border-white/10 rounded-xl p-6 max-w-md w-full shadow-2xl transform transition-all">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex size-12 items-center justify-center rounded-full bg-red-500/20">
+              <Icon name="logout" className="text-red-400 text-2xl" />
+            </div>
+            <div>
+              <h3 className="text-white text-lg font-bold">Cerrar Sesión</h3>
+              <p className="text-white/60 text-sm">¿Estás seguro de que deseas salir?</p>
+            </div>
+          </div>
+          
+          <p className="text-white/70 text-sm mb-6">
+            Se cerrará tu sesión actual y deberás iniciar sesión nuevamente para acceder al sistema.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={() => setShowLogoutModal(false)}
+              className="flex-1 px-4 py-2.5 rounded-lg border border-white/20 text-white hover:bg-white/5 transition-colors font-medium text-sm"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={handleLogout}
+              className="flex-1 px-4 py-2.5 rounded-lg bg-red-500 hover:bg-red-600 text-white transition-colors font-bold text-sm shadow-lg shadow-red-500/25"
+            >
+              Cerrar Sesión
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
     </>
   );
 };

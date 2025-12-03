@@ -7,8 +7,10 @@ import SubjectDetailModal from '../../components/molecules/SubjectDetailModal';
 import EditSubjectModal from '../../components/molecules/EditSubjectModal';
 import { useAsignaturas } from '../../hooks/useAsignaturas';
 import { useProgramasEstudio } from '../../hooks/useProgramasEstudio';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const SubjectsDashboard = () => {
+  const { t } = useLanguage();
   const {
     asignaturas,
     loading,
@@ -155,10 +157,10 @@ const SubjectsDashboard = () => {
         isOpen={showDeleteConfirm}
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
-        title="¿Eliminar asignatura?"
-        message={`¿Estás seguro de eliminar la asignatura "${asignaturaToDelete?.nombre}"? Esta acción no se puede deshacer.`}
-        confirmText="Sí, eliminar"
-        cancelText="Cancelar"
+        title={t('subjects.messages.deleteConfirm.title')}
+        message={t('subjects.messages.deleteConfirm.message', { name: asignaturaToDelete?.nombre })}
+        confirmText={t('common.actions.delete')}
+        cancelText={t('common.actions.cancel')}
         type="warning"
       />
 
@@ -187,19 +189,22 @@ const SubjectsDashboard = () => {
         <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between gap-3 sm:gap-4 p-4 sm:p-6 items-start sm:items-center">
           <div className="flex flex-col gap-2 min-w-0">
             <p className="text-white text-2xl sm:text-3xl lg:text-4xl font-black leading-tight tracking-[-0.033em]">
-              Subjects Management
+              {t('subjects.title')}
             </p>
             <p className="text-[#a19cba] text-sm sm:text-base font-normal leading-normal">
-              Manage academic subjects and courses
+              {t('subjects.subtitle')}
             </p>
           </div>
           
           <Link
             to="/subjects/create"
-            className="flex items-center gap-2 w-full sm:w-auto min-w-[84px] cursor-pointer justify-center overflow-hidden rounded-lg h-11 px-4 sm:px-6 bg-linear-to-r from-[#2563eb] to-[#3b82f6] text-white text-sm font-bold leading-normal tracking-[0.015em] hover:from-[#1d4ed8] hover:to-[#2563eb] hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300"
+            className="flex items-center gap-2 w-full sm:w-auto min-w-[84px] cursor-pointer justify-center overflow-hidden rounded-lg h-11 px-4 sm:px-6 text-white text-sm font-bold leading-normal tracking-[0.015em] hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300"
+            style={{
+              background: 'linear-gradient(to right, #2563eb, #3b82f6)'
+            }}
           >
             <Icon name="add" />
-            <span className="truncate">Create Subject</span>
+            <span className="truncate">{t('subjects.createButton')}</span>
           </Link>
         </div>
 
@@ -211,7 +216,7 @@ const SubjectsDashboard = () => {
                 <Icon name="import_contacts" className="text-primary text-xl sm:text-2xl" />
               </div>
               <div>
-                <p className="text-[#a19cba] text-xs sm:text-sm">Total Subjects</p>
+                <p className="text-[#a19cba] text-xs sm:text-sm">{t('subjects.stats.totalSubjects')}</p>
                 <p className="text-white text-xl sm:text-2xl font-bold">
                   {loading ? '...' : totalCount}
                 </p>
@@ -225,7 +230,7 @@ const SubjectsDashboard = () => {
                 <Icon name="school" className="text-cyan-500 text-xl sm:text-2xl" />
               </div>
               <div>
-                <p className="text-[#a19cba] text-xs sm:text-sm">Study Programs</p>
+                <p className="text-[#a19cba] text-xs sm:text-sm">{t('subjects.stats.studyPrograms')}</p>
                 <p className="text-white text-xl sm:text-2xl font-bold">
                   {loading ? '...' : programas.length}
                 </p>
@@ -239,7 +244,7 @@ const SubjectsDashboard = () => {
                 <Icon name="filter_alt" className="text-fuchsia-600 text-xl sm:text-2xl" />
               </div>
               <div>
-                <p className="text-[#a19cba] text-xs sm:text-sm">Filtered Results</p>
+                <p className="text-[#a19cba] text-xs sm:text-sm">{t('subjects.stats.filteredResults')}</p>
                 <p className="text-white text-xl sm:text-2xl font-bold">
                   {loading ? '...' : displayAsignaturas.length}
                 </p>
@@ -254,14 +259,14 @@ const SubjectsDashboard = () => {
             {/* Filter by Program */}
             <div className="flex-1">
               <label className="text-white text-sm font-medium mb-2 block">
-                Filtrar por Programa de Estudio
+                {t('subjects.filters.byProgram')}
               </label>
               <select
                 value={filterPrograma}
                 onChange={(e) => setFilterPrograma(e.target.value)}
                 className="w-full form-input resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#252233] focus:ring-primary border border-[#3f3b54] bg-[#1d1b27] h-11 px-4 text-sm"
               >
-                <option value="all">Todos los programas</option>
+                <option value="all">{t('subjects.filters.allPrograms')}</option>
                 {programas.map(programa => (
                   <option key={programa.id} value={programa.id}>
                     {programa.nombre}
@@ -273,14 +278,14 @@ const SubjectsDashboard = () => {
             {/* Filter by Cuatrimestre */}
             <div className="flex-1">
               <label className="text-white text-sm font-medium mb-2 block">
-                Filtrar por Cuatrimestre
+                {t('subjects.filters.bySemester')}
               </label>
               <select
                 value={filterCuatrimestre}
                 onChange={(e) => setFilterCuatrimestre(e.target.value)}
                 className="w-full form-input resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#252233] focus:ring-primary border border-[#3f3b54] bg-[#1d1b27] h-11 px-4 text-sm"
               >
-                <option value="all">Todos los cuatrimestres</option>
+                <option value="all">{t('subjects.filters.allSemesters')}</option>
                 {Array.from({ length: getMaxCuatrimestre() }, (_, i) => i + 1).map(num => (
                   <option key={num} value={num}>{num}° Cuatrimestre</option>
                 ))}
@@ -295,7 +300,7 @@ const SubjectsDashboard = () => {
                 className="flex items-center justify-center gap-2 rounded-lg h-11 px-4 bg-transparent text-[#a19cba] font-medium border border-white/10 hover:border-[#a19cba] hover:text-white transition-all duration-200 w-full lg:w-auto disabled:opacity-50"
               >
                 <Icon name="refresh" className={searching ? "animate-spin" : ""} />
-                <span>Limpiar</span>
+                <span>{t('subjects.filters.clear')}</span>
               </button>
             </div>
           </div>
@@ -305,7 +310,7 @@ const SubjectsDashboard = () => {
             <div className="mt-4 flex items-center gap-2 text-sm">
               <Icon name="filter_alt" className="text-primary" />
               <span className="text-[#a19cba]">
-                Mostrando {displayAsignaturas.length} de {totalCount} asignaturas
+                {t('subjects.filters.showing', { count: displayAsignaturas.length, total: totalCount })}
               </span>
             </div>
           )}
@@ -313,20 +318,20 @@ const SubjectsDashboard = () => {
 
         {/* Subjects Table */}
         <div className="mt-6 sm:mt-8 mx-4 sm:mx-6 rounded-xl border border-white/10 bg-[#252233] p-4 sm:p-6">
-          <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4">Registered Subjects</h3>
+          <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4">{t('subjects.table.title')}</h3>
           
           {loading || searching ? (
             <div className="flex items-center justify-center py-12">
               <Icon name="sync" className="animate-spin text-primary text-4xl" />
-              <span className="ml-3 text-white/60">Loading subjects...</span>
+              <span className="ml-3 text-white/60">{t('common.loading')}</span>
             </div>
           ) : displayAsignaturas.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
               <Icon name="import_contacts" className="text-white/20 text-6xl mb-4" />
               <p className="text-white/60 text-lg">
                 {(filterPrograma !== 'all' || filterCuatrimestre !== 'all')
-                  ? 'No se encontraron asignaturas con los criterios de búsqueda'
-                  : 'No subjects registered yet'
+                  ? t('subjects.messages.noResults')
+                  : t('subjects.messages.noSubjects')
                 }
               </p>
               {filterPrograma === 'all' && filterCuatrimestre === 'all' && (
@@ -334,7 +339,7 @@ const SubjectsDashboard = () => {
                   to="/subjects/create"
                   className="mt-4 text-primary hover:text-primary/80 transition-colors"
                 >
-                  Create your first subject
+                  {t('subjects.messages.createFirst')}
                 </Link>
               )}
             </div>
@@ -343,11 +348,11 @@ const SubjectsDashboard = () => {
               <table className="w-full min-w-[640px]">
                 <thead>
                   <tr className="border-b border-white/10">
-                    <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 pl-4 sm:pl-0">Subject Name</th>
-                    <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3">Semester</th>
-                    <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 hidden lg:table-cell">Study Program</th>
-                    <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 hidden md:table-cell">Created</th>
-                    <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 pr-4 sm:pr-0">Actions</th>
+                    <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 pl-4 sm:pl-0">{t('subjects.table.subject')}</th>
+                    <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3">{t('subjects.table.semester')}</th>
+                    <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 hidden lg:table-cell">{t('subjects.table.program')}</th>
+                    <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 hidden md:table-cell">{t('common.table.created')}</th>
+                    <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 pr-4 sm:pr-0">{t('common.table.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -370,21 +375,21 @@ const SubjectsDashboard = () => {
                           <button 
                             onClick={() => handleViewDetails(asignatura)}
                             className="text-white/70 hover:text-primary transition-colors"
-                            title="View details"
+                            title={t('subjects.tooltips.viewDetails')}
                           >
                             <Icon name="visibility" className="text-base" />
                           </button>
                           <button 
                             onClick={() => handleEditClick(asignatura)}
                             className="text-white/70 hover:text-blue-500 transition-colors"
-                            title="Edit subject"
+                            title={t('subjects.tooltips.editSubject')}
                           >
                             <Icon name="edit" className="text-base" />
                           </button>
                           <button 
                             onClick={() => handleDeleteClick(asignatura)}
                             className="text-white/70 hover:text-red-500 transition-colors"
-                            title="Delete subject"
+                            title={t('subjects.tooltips.deleteSubject')}
                           >
                             <Icon name="delete" className="text-base" />
                           </button>

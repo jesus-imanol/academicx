@@ -6,8 +6,10 @@ import { useDocentes } from '../../hooks/useDocentes';
 import { useAsignaturas } from '../../hooks/useAsignaturas';
 import { TeacherDetailModal, EditTeacherModal } from '../../components/molecules';
 import ConfirmDialog from '../../components/molecules/ConfirmDialog';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const TeachersDashboard = () => {
+  const { t } = useLanguage();
   const { 
     docentes, 
     loading, 
@@ -81,10 +83,10 @@ const TeachersDashboard = () => {
   const handleDelete = (teacher) => {
     setConfirmDialog({
       type: 'warning',
-      title: 'Delete Teacher',
-      message: `Are you sure you want to delete "${teacher.nombre}"? This action cannot be undone.`,
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
+      title: t('teachers.messages.deleteConfirm.title'),
+      message: t('teachers.messages.deleteConfirm.message', { name: teacher.nombre }),
+      confirmText: t('common.actions.delete'),
+      cancelText: t('common.actions.cancel'),
       onConfirm: async () => {
         try {
           await deleteDocente(teacher.id);
@@ -120,10 +122,10 @@ const TeachersDashboard = () => {
       <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between gap-3 sm:gap-4 p-4 sm:p-6 items-start sm:items-center">
         <div className="flex flex-col gap-2 min-w-0">
           <p className="text-white text-2xl sm:text-3xl lg:text-4xl font-black leading-tight tracking-[-0.033em]">
-            Teachers Management
+            {t('teachers.title')}
           </p>
           <p className="text-[#a19cba] text-sm sm:text-base font-normal leading-normal">
-            Manage teachers and their teaching competencies
+            {t('teachers.subtitle')}
           </p>
         </div>
         
@@ -135,7 +137,7 @@ const TeachersDashboard = () => {
           }}
         >
           <Icon name="add" />
-          <span className="truncate">Register Teacher</span>
+          <span className="truncate">{t('teachers.registerButton')}</span>
         </Link>
       </div>
 
@@ -147,7 +149,7 @@ const TeachersDashboard = () => {
               <Icon name="group" className="text-primary text-xl sm:text-2xl" />
             </div>
             <div>
-              <p className="text-[#a19cba] text-xs sm:text-sm">Total Teachers</p>
+              <p className="text-[#a19cba] text-xs sm:text-sm">{t('teachers.stats.totalTeachers')}</p>
               <p className="text-white text-xl sm:text-2xl font-bold">
                 {loading ? '...' : totalCount}
               </p>
@@ -161,7 +163,7 @@ const TeachersDashboard = () => {
               <Icon name="import_contacts" className="text-cyan-500 text-xl sm:text-2xl" />
             </div>
             <div>
-              <p className="text-[#a19cba] text-xs sm:text-sm">Available Subjects</p>
+              <p className="text-[#a19cba] text-xs sm:text-sm">{t('teachers.stats.availableSubjects')}</p>
               <p className="text-white text-xl sm:text-2xl font-bold">
                 {loading ? '...' : totalAsignaturas}
               </p>
@@ -175,7 +177,7 @@ const TeachersDashboard = () => {
               <Icon name="school" className="text-fuchsia-600 text-xl sm:text-2xl" />
             </div>
             <div>
-              <p className="text-[#a19cba] text-xs sm:text-sm">Total Competencies</p>
+              <p className="text-[#a19cba] text-xs sm:text-sm">{t('teachers.stats.totalCompetencies')}</p>
               <p className="text-white text-xl sm:text-2xl font-bold">
                 {loading ? '...' : getTotalCompetencias()}
               </p>
@@ -186,12 +188,12 @@ const TeachersDashboard = () => {
 
       {/* Teachers Table */}
       <div className="mt-6 sm:mt-8 mx-4 sm:mx-6 rounded-xl border border-white/10 bg-[#252233] p-4 sm:p-6">
-        <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4">Registered Teachers</h3>
+        <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4">{t('teachers.table.title')}</h3>
         
         {loading ? (
           <div className="text-center py-8">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-            <p className="text-[#a19cba] mt-2">Loading teachers...</p>
+            <p className="text-[#a19cba] mt-2">{t('common.loading')}</p>
           </div>
         ) : error ? (
           <div className="text-center py-8">
@@ -201,13 +203,13 @@ const TeachersDashboard = () => {
         ) : docentes.length === 0 ? (
           <div className="text-center py-8">
             <Icon name="group" className="text-[#a19cba] text-4xl mb-2" />
-            <p className="text-[#a19cba]">No teachers registered yet</p>
+            <p className="text-[#a19cba]">{t('teachers.messages.noTeachers')}</p>
             <Link
               to="/teachers/register"
               className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-primary/20 text-primary rounded-lg hover:bg-primary/30 transition-colors"
             >
               <Icon name="add" />
-              Register First Teacher
+              {t('teachers.messages.registerFirst')}
             </Link>
           </div>
         ) : (
@@ -215,10 +217,10 @@ const TeachersDashboard = () => {
             <table className="w-full min-w-[640px]">
               <thead>
                 <tr className="border-b border-white/10">
-                  <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 pl-4 sm:pl-0">Name</th>
-                  <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 hidden lg:table-cell">Competencies</th>
-                  <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 hidden md:table-cell">Created Date</th>
-                  <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 pr-4 sm:pr-0">Actions</th>
+                  <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 pl-4 sm:pl-0">{t('teachers.table.name')}</th>
+                  <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 hidden lg:table-cell">{t('teachers.table.competencies')}</th>
+                  <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 hidden md:table-cell">{t('common.table.created')}</th>
+                  <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 pr-4 sm:pr-0">{t('common.table.actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -232,7 +234,7 @@ const TeachersDashboard = () => {
                     </td>
                     <td className="py-3 sm:py-4 text-white text-xs sm:text-sm hidden lg:table-cell">
                       <span className="bg-cyan-500/20 text-cyan-400 px-2 py-1 rounded text-xs">
-                        {teacher.asignaturasCompetencia?.length || 0} subjects
+                        {teacher.asignaturasCompetencia?.length || 0} {(teacher.asignaturasCompetencia?.length || 0) === 1 ? 'subject' : 'subjects'}
                       </span>
                     </td>
                     <td className="py-3 sm:py-4 text-[#a19cba] text-xs sm:text-sm hidden md:table-cell">
@@ -243,21 +245,21 @@ const TeachersDashboard = () => {
                         <button 
                           onClick={() => handleViewDetails(teacher)}
                           className="text-white/70 hover:text-primary transition-colors"
-                          title="View Details"
+                          title={t('teachers.tooltips.viewDetails')}
                         >
                           <Icon name="visibility" className="text-base" />
                         </button>
                         <button 
                           onClick={() => handleEdit(teacher)}
                           className="text-white/70 hover:text-white transition-colors"
-                          title="Edit"
+                          title={t('teachers.tooltips.editTeacher')}
                         >
                           <Icon name="edit" className="text-base" />
                         </button>
                         <button 
                           onClick={() => handleDelete(teacher)}
                           className="text-white/70 hover:text-red-500 transition-colors"
-                          title="Delete"
+                          title={t('teachers.tooltips.deleteTeacher')}
                         >
                           <Icon name="delete" className="text-base" />
                         </button>

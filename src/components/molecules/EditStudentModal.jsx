@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Icon from '../atoms/Icon';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const EditStudentModal = ({ isOpen, onClose, onSave, alumno }) => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     nombre: '',
     matricula: '',
@@ -58,8 +60,8 @@ const EditStudentModal = ({ isOpen, onClose, onSave, alumno }) => {
               <Icon name="edit" className="text-blue-500 text-2xl" />
             </div>
             <div>
-              <h3 className="text-white text-xl font-bold">Editar Estudiante</h3>
-              <p className="text-[#a19cba] text-sm">Actualiza la información del estudiante</p>
+              <h3 className="text-white text-xl font-bold">{t('students.modal.editTitle')}</h3>
+              <p className="text-[#a19cba] text-sm">{t('students.modal.editSubtitle')}</p>
             </div>
           </div>
           <button
@@ -75,7 +77,7 @@ const EditStudentModal = ({ isOpen, onClose, onSave, alumno }) => {
           {/* Nombre */}
           <div className="flex flex-col gap-2">
             <label className="text-white text-sm font-medium">
-              Nombre Completo
+              {t('students.form.fullName')}
             </label>
             <input
               type="text"
@@ -90,7 +92,7 @@ const EditStudentModal = ({ isOpen, onClose, onSave, alumno }) => {
           {/* Matrícula */}
           <div className="flex flex-col gap-2">
             <label className="text-white text-sm font-medium">
-              Matrícula
+              {t('students.form.enrollment')}
             </label>
             <input
               type="text"
@@ -105,7 +107,7 @@ const EditStudentModal = ({ isOpen, onClose, onSave, alumno }) => {
           {/* Cuatrimestre */}
           <div className="flex flex-col gap-2">
             <label className="text-white text-sm font-medium">
-              Cuatrimestre Actual
+              {t('students.form.currentSemester')}
             </label>
             <select
               name="cuatrimestreActual"
@@ -130,12 +132,12 @@ const EditStudentModal = ({ isOpen, onClose, onSave, alumno }) => {
               {saving ? (
                 <>
                   <Icon name="sync" className="animate-spin" />
-                  <span>Guardando...</span>
+                  <span>{t('students.modal.saving')}</span>
                 </>
               ) : (
                 <>
                   <Icon name="check" />
-                  <span>Guardar Cambios</span>
+                  <span>{t('students.modal.saveChanges')}</span>
                 </>
               )}
             </button>
@@ -146,7 +148,7 @@ const EditStudentModal = ({ isOpen, onClose, onSave, alumno }) => {
               className="flex-1 flex items-center justify-center gap-2 rounded-lg h-11 px-4 bg-transparent text-[#a19cba] text-sm font-bold border border-white/10 hover:border-[#a19cba] hover:text-white transition-all duration-200 disabled:opacity-50"
             >
               <Icon name="close" />
-              <span>Cancelar</span>
+              <span>{t('students.modal.cancel')}</span>
             </button>
           </div>
         </form>
