@@ -1,46 +1,110 @@
 import { useState } from 'react';
-import MainLayout from '../../layouts/MainLayout';
-import PageHeader from '../../components/molecules/PageHeader';
+import { useNavigate } from 'react-router';
+import AdminLayout from '../../layouts/AdminLayout';
 import CreateProgramForm from '../../components/organisms/CreateProgramForm';
-import ProgramVisualizer from '../../components/organisms/ProgramVisualizer';
+import ConfirmDialog from '../../components/molecules/ConfirmDialog';
+import { useProgramasEstudio } from '../../hooks/useProgramasEstudio';
+import { useToast } from '../../hooks/useToast';
 
 const CreateStudyProgramPage = () => {
-  const handleSubmit = (data) => {
-    console.log('Form submitted:', data);
-    // Aquí puedes agregar la lógica para enviar los datos al backend
+  const navigate = useNavigate();
+  const { createPrograma } = useProgramasEstudio();
+  const { showSuccess, showError } = useToast();
+  const [submitting, setSubmitting] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const handleSubmit = async (data) => {
+    if (!data.nombre?.trim()) {
+      showError('Por favor ingresa el nombre del programa.');
+      return;
+    }
+
+    if (!data.cantidadCuatrimestres || data.cantidadCuatrimestres < 1) {
+      showError('Por favor ingresa una cantidad válida de cuatrimestres.');
+      return;
+    }
+
+    setSubmitting(true);
+
+    const programaData = {
+      nombre: data.nombre.trim(),
+      cantidadCuatrimestres: parseInt(data.cantidadCuatrimestres)
+    };
+
+    const result = await createPrograma(programaData);
+    setSubmitting(false);
+
+    if (result.success) {
+      showSuccess('Programa de estudio creado exitosamente!');
+      
+      // Mostrar diálogo de confirmación
+      setTimeout(() => {
+        setShowConfirm(true);
+      }, 1000);
+    } else {
+      // Manejar diferentes códigos de error
+      const errorMessage = result.error?.includes('409') || result.error?.includes('ya existe')
+        ? 'Ya existe un programa con ese nombre. Por favor elige otro nombre.'
+        : result.error?.includes('400') || result.error?.includes('inválido')
+        ? 'Datos inválidos. Verifica que todos los campos estén correctos.'
+        : result.error || 'Error al crear programa de estudio. Intenta de nuevo.';
+      
+      showError(errorMessage);
+    }
   };
 
   const handleCancel = () => {
-    console.log('Form cancelled');
-    // Aquí puedes agregar la lógica para cancelar o redirigir
+    navigate('/study-programs');
   };
 
   const handleClose = () => {
-    console.log('Close clicked');
-    // Aquí puedes agregar la lógica para cerrar o redirigir
+    navigate('/study-programs');
+  };
+
+  const handleConfirmCreateAnother = () => {
+    setShowConfirm(false);
+    window.location.reload();
+  };
+
+  const handleCancelCreateAnother = () => {
+    setShowConfirm(false);
+    navigate('/study-programs');
   };
 
   return (
-    <MainLayout activeNavItem="study-programs">
-      <PageHeader
-        title="Create New Study Program"
-        subtitle="Fill in the details below to create a new program."
-        onClose={handleClose}
+    <>
+      <ConfirmDialog
+        isOpen={showConfirm}
+        onConfirm={handleConfirmCreateAnother}
+        onCancel={handleCancelCreateAnother}
+        title="¡Programa creado exitosamente!"
+        message="¿Deseas crear otro programa de estudio?"
+        confirmText="Sí, crear otro"
+        cancelText="No, ir al dashboard"
+        type="success"
       />
-
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
-        {/* Form Container */}
-        <div className="lg:col-span-3">
-          <CreateProgramForm
-            onSubmit={handleSubmit}
-            onCancel={handleCancel}
-          />
+      
+      <AdminLayout activeNavItem="study-programs">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between gap-3 sm:gap-4 p-4 sm:p-6 items-start sm:items-center">
+        <div className="flex flex-col gap-2 min-w-0">
+          <p className="text-white text-2xl sm:text-3xl lg:text-4xl font-black leading-tight tracking-[-0.033em]">
+            Create New Study Program
+          </p>
+          <p className="text-[#a19cba] text-sm sm:text-base font-normal leading-normal">
+            Fill in the details below to create a new program.
+          </p>
         </div>
-
-        {/* Visualizer Panel */}
-        <ProgramVisualizer />
       </div>
-    </MainLayout>
+
+      <div className="px-4 sm:px-6 pb-6">
+        <CreateProgramForm
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+          isSubmitting={submitting}
+        />
+      </div>
+    </AdminLayout>
+    </>
   );
 };
 

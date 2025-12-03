@@ -3,34 +3,39 @@ import { Link } from 'react-router';
 import AdminLayout from '../../layouts/AdminLayout';
 import Icon from '../../components/atoms/Icon';
 import ConfirmDialog from '../../components/molecules/ConfirmDialog';
-import StudentDetailModal from '../../components/molecules/StudentDetailModal';
-import EditStudentModal from '../../components/molecules/EditStudentModal';
-import { useAlumnos } from '../../hooks/useAlumnos';
+import SubjectDetailModal from '../../components/molecules/SubjectDetailModal';
+import EditSubjectModal from '../../components/molecules/EditSubjectModal';
+import { useAsignaturas } from '../../hooks/useAsignaturas';
+import { useProgramasEstudio } from '../../hooks/useProgramasEstudio';
 
-const StudentsDashboard = () => {
-  const { 
-    alumnos, 
-    loading, 
-    fetchAlumnos, 
-    fetchAlumnosCount, 
-    fetchAlumnoByMatricula,
-    fetchAlumnosByCuatrimestre,
-    updateAlumno,
-    deleteAlumno 
-  } = useAlumnos();
+const SubjectsDashboard = () => {
+  const {
+    asignaturas,
+    loading,
+    fetchAsignaturas,
+    fetchAsignaturasCount,
+    fetchAsignaturasByCuatrimestre,
+    fetchAsignaturasByPrograma,
+    fetchAsignaturasByProgramaAndCuatrimestre,
+    updateAsignatura,
+    deleteAsignatura
+  } = useAsignaturas();
+
+  const { programas } = useProgramasEstudio();
+
   const [totalCount, setTotalCount] = useState(0);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [alumnoToDelete, setAlumnoToDelete] = useState(null);
+  const [asignaturaToDelete, setAsignaturaToDelete] = useState(null);
   
   // Modal states
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedAlumno, setSelectedAlumno] = useState(null);
+  const [selectedAsignatura, setSelectedAsignatura] = useState(null);
   
   // Filter states
-  const [searchMatricula, setSearchMatricula] = useState('');
+  const [filterPrograma, setFilterPrograma] = useState('all');
   const [filterCuatrimestre, setFilterCuatrimestre] = useState('all');
-  const [filteredAlumnos, setFilteredAlumnos] = useState([]);
+  const [filteredAsignaturas, setFilteredAsignaturas] = useState([]);
   const [searching, setSearching] = useState(false);
 
   useEffect(() => {
@@ -39,103 +44,110 @@ const StudentsDashboard = () => {
 
   useEffect(() => {
     applyFilters();
-  }, [alumnos, filterCuatrimestre]);
+  }, [asignaturas, filterPrograma, filterCuatrimestre]);
 
   const loadData = async () => {
-    await fetchAlumnos();
-    const count = await fetchAlumnosCount();
+    await fetchAsignaturas();
+    const count = await fetchAsignaturasCount();
     setTotalCount(count);
   };
 
-  const applyFilters = () => {
-    let filtered = [...alumnos];
-    
-    if (filterCuatrimestre !== 'all') {
-      filtered = filtered.filter(
-        alumno => alumno.cuatrimestreActual === parseInt(filterCuatrimestre)
-      );
-    }
-    
-    setFilteredAlumnos(filtered);
-  };
-
-  const handleSearchByMatricula = async () => {
-    if (!searchMatricula.trim()) {
-      await loadData();
-      return;
-    }
-
+  const applyFilters = async () => {
     setSearching(true);
     try {
-      const alumno = await fetchAlumnoByMatricula(searchMatricula.trim());
-      setFilteredAlumnos([alumno]);
+      let filtered = [];
+
+      if (filterPrograma !== 'all' && filterCuatrimestre !== 'all') {
+        // Filtrar por programa Y cuatrimestre
+        filtered = await fetchAsignaturasByProgramaAndCuatrimestre(filterPrograma, parseInt(filterCuatrimestre));
+      } else if (filterPrograma !== 'all') {
+        // Solo filtrar por programa
+        filtered = await fetchAsignaturasByPrograma(filterPrograma);
+      } else if (filterCuatrimestre !== 'all') {
+        // Solo filtrar por cuatrimestre
+        filtered = await fetchAsignaturasByCuatrimestre(parseInt(filterCuatrimestre));
+      } else {
+        // Sin filtros
+        filtered = asignaturas;
+      }
+
+      setFilteredAsignaturas(filtered);
     } catch (error) {
-      setFilteredAlumnos([]);
+      console.error('Error applying filters:', error);
+      setFilteredAsignaturas([]);
     } finally {
       setSearching(false);
     }
   };
 
   const handleClearFilters = async () => {
-    setSearchMatricula('');
+    setFilterPrograma('all');
     setFilterCuatrimestre('all');
     await loadData();
   };
 
-  const handleViewDetails = (alumno) => {
-    setSelectedAlumno(alumno);
+  const handleViewDetails = (asignatura) => {
+    setSelectedAsignatura(asignatura);
     setShowDetailModal(true);
   };
 
-  const handleEditClick = (alumno) => {
-    setSelectedAlumno(alumno);
+  const handleEditClick = (asignatura) => {
+    setSelectedAsignatura(asignatura);
     setShowEditModal(true);
   };
 
   const handleSaveEdit = async (id, updatedData) => {
-    try {
-      await updateAlumno(id, updatedData);
+    const result = await updateAsignatura(id, updatedData);
+    if (result.success) {
       setShowEditModal(false);
-      setSelectedAlumno(null);
+      setSelectedAsignatura(null);
       await loadData();
-    } catch (error) {
-      console.error('Error updating alumno:', error);
     }
   };
 
-  const handleDeleteClick = (alumno) => {
-    setAlumnoToDelete(alumno);
+  const handleDeleteClick = (asignatura) => {
+    setAsignaturaToDelete(asignatura);
     setShowDeleteConfirm(true);
   };
 
   const handleConfirmDelete = async () => {
-    if (!alumnoToDelete) return;
+    if (!asignaturaToDelete) return;
 
     setShowDeleteConfirm(false);
     try {
-      await deleteAlumno(alumnoToDelete.id);
-      setAlumnoToDelete(null);
-      // Actualizar el conteo
-      const count = await fetchAlumnosCount();
+      await deleteAsignatura(asignaturaToDelete.id);
+      setAsignaturaToDelete(null);
+      const count = await fetchAsignaturasCount();
       setTotalCount(count);
     } catch (error) {
-      console.error('Error deleting alumno:', error);
-      setAlumnoToDelete(null);
+      console.error('Error deleting asignatura:', error);
+      setAsignaturaToDelete(null);
     }
   };
 
   const handleCancelDelete = () => {
     setShowDeleteConfirm(false);
-    setAlumnoToDelete(null);
+    setAsignaturaToDelete(null);
   };
 
-  const calculateTotalEnrollments = () => {
-    // Por ahora retornamos un cálculo simulado
-    // Esto se debería calcular desde el backend cuando implementes materias
-    return alumnos.length * 5; // Promedio de 5 materias por alumno
+  const displayAsignaturas = (filterPrograma !== 'all' || filterCuatrimestre !== 'all') 
+    ? filteredAsignaturas 
+    : asignaturas;
+
+  const getProgramaName = (programaId) => {
+    const programa = programas.find(p => p.id === programaId);
+    return programa?.nombre || 'N/A';
   };
 
-  const displayAlumnos = searchMatricula ? filteredAlumnos : (filterCuatrimestre !== 'all' ? filteredAlumnos : alumnos);
+  const getSelectedPrograma = (asignatura) => {
+    return programas.find(p => p.id === asignatura?.programaEstudioId);
+  };
+
+  const getMaxCuatrimestre = () => {
+    if (filterPrograma === 'all') return 10;
+    const programa = programas.find(p => p.id === filterPrograma);
+    return programa?.cantidadCuatrimestres || 10;
+  };
 
   return (
     <>
@@ -143,61 +155,63 @@ const StudentsDashboard = () => {
         isOpen={showDeleteConfirm}
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
-        title="¿Eliminar estudiante?"
-        message={`¿Estás seguro de eliminar a "${alumnoToDelete?.nombre}"? Esta acción no se puede deshacer.`}
+        title="¿Eliminar asignatura?"
+        message={`¿Estás seguro de eliminar la asignatura "${asignaturaToDelete?.nombre}"? Esta acción no se puede deshacer.`}
         confirmText="Sí, eliminar"
         cancelText="Cancelar"
         type="warning"
       />
 
-      <StudentDetailModal
+      <SubjectDetailModal
         isOpen={showDetailModal}
         onClose={() => {
           setShowDetailModal(false);
-          setSelectedAlumno(null);
+          setSelectedAsignatura(null);
         }}
-        alumno={selectedAlumno}
+        asignatura={selectedAsignatura}
+        programa={getSelectedPrograma(selectedAsignatura)}
       />
 
-      <EditStudentModal
+      <EditSubjectModal
         isOpen={showEditModal}
         onClose={() => {
           setShowEditModal(false);
-          setSelectedAlumno(null);
+          setSelectedAsignatura(null);
         }}
         onSave={handleSaveEdit}
-        alumno={selectedAlumno}
+        asignatura={selectedAsignatura}
+        programas={programas}
       />
 
-      <AdminLayout activeNavItem="students">
+      <AdminLayout activeNavItem="subjects">
         <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between gap-3 sm:gap-4 p-4 sm:p-6 items-start sm:items-center">
           <div className="flex flex-col gap-2 min-w-0">
             <p className="text-white text-2xl sm:text-3xl lg:text-4xl font-black leading-tight tracking-[-0.033em]">
-              Students Management
+              Subjects Management
             </p>
             <p className="text-[#a19cba] text-sm sm:text-base font-normal leading-normal">
-              Manage student registrations and enrollments
+              Manage academic subjects and courses
             </p>
           </div>
           
           <Link
-            to="/students/register"
+            to="/subjects/create"
             className="flex items-center gap-2 w-full sm:w-auto min-w-[84px] cursor-pointer justify-center overflow-hidden rounded-lg h-11 px-4 sm:px-6 bg-linear-to-r from-[#2563eb] to-[#3b82f6] text-white text-sm font-bold leading-normal tracking-[0.015em] hover:from-[#1d4ed8] hover:to-[#2563eb] hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300"
           >
             <Icon name="add" />
-            <span className="truncate">Register Student</span>
+            <span className="truncate">Create Subject</span>
           </Link>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 px-4 sm:px-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 p-4 sm:p-6 mt-4 sm:mt-6">
           <div className="rounded-xl border border-white/10 bg-[#252233] p-4 sm:p-6">
             <div className="flex items-center gap-3 sm:gap-4">
               <div className="flex size-10 sm:size-12 items-center justify-center rounded-full bg-primary/20">
-                <Icon name="group" className="text-primary text-xl sm:text-2xl" />
+                <Icon name="import_contacts" className="text-primary text-xl sm:text-2xl" />
               </div>
               <div>
-                <p className="text-[#a19cba] text-xs sm:text-sm">Total Students</p>
+                <p className="text-[#a19cba] text-xs sm:text-sm">Total Subjects</p>
                 <p className="text-white text-xl sm:text-2xl font-bold">
                   {loading ? '...' : totalCount}
                 </p>
@@ -211,9 +225,9 @@ const StudentsDashboard = () => {
                 <Icon name="school" className="text-cyan-500 text-xl sm:text-2xl" />
               </div>
               <div>
-                <p className="text-[#a19cba] text-xs sm:text-sm">Active Enrollments</p>
+                <p className="text-[#a19cba] text-xs sm:text-sm">Study Programs</p>
                 <p className="text-white text-xl sm:text-2xl font-bold">
-                  {loading ? '...' : calculateTotalEnrollments()}
+                  {loading ? '...' : programas.length}
                 </p>
               </div>
             </div>
@@ -222,42 +236,38 @@ const StudentsDashboard = () => {
           <div className="rounded-xl border border-white/10 bg-[#252233] p-4 sm:p-6 sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-3 sm:gap-4">
               <div className="flex size-10 sm:size-12 items-center justify-center rounded-full bg-fuchsia-600/20">
-                <Icon name="import_contacts" className="text-fuchsia-600 text-xl sm:text-2xl" />
+                <Icon name="filter_alt" className="text-fuchsia-600 text-xl sm:text-2xl" />
               </div>
               <div>
-                <p className="text-[#a19cba] text-xs sm:text-sm">Total Courses</p>
-                <p className="text-white text-xl sm:text-2xl font-bold">12</p>
+                <p className="text-[#a19cba] text-xs sm:text-sm">Filtered Results</p>
+                <p className="text-white text-xl sm:text-2xl font-bold">
+                  {loading ? '...' : displayAsignaturas.length}
+                </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Search and Filters */}
-        <div className="mt-6 sm:mt-8 mx-4 sm:mx-6 rounded-xl border border-white/10 bg-[#252233] p-4 sm:p-6">
+        {/* Filters */}
+        <div className="mt-6 mx-4 sm:mx-6 rounded-xl border border-white/10 bg-[#252233] p-4 sm:p-6">
           <div className="flex flex-col lg:flex-row gap-4">
-            {/* Search by Matricula */}
+            {/* Filter by Program */}
             <div className="flex-1">
               <label className="text-white text-sm font-medium mb-2 block">
-                Buscar por Matrícula
+                Filtrar por Programa de Estudio
               </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={searchMatricula}
-                  onChange={(e) => setSearchMatricula(e.target.value.toUpperCase())}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearchByMatricula()}
-                  placeholder="A20240001"
-                  className="flex-1 form-input resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#252233] focus:ring-primary border border-[#3f3b54] bg-[#1d1b27] h-11 placeholder:text-[#a19cba] px-4 text-sm"
-                />
-                <button
-                  onClick={handleSearchByMatricula}
-                  disabled={searching || !searchMatricula.trim()}
-                  className="flex items-center justify-center gap-2 rounded-lg h-11 px-4 bg-primary hover:bg-primary/80 text-white font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-                >
-                  <Icon name={searching ? "sync" : "search"} className={searching ? "animate-spin" : ""} />
-                  <span className="hidden sm:inline">Buscar</span>
-                </button>
-              </div>
+              <select
+                value={filterPrograma}
+                onChange={(e) => setFilterPrograma(e.target.value)}
+                className="w-full form-input resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#252233] focus:ring-primary border border-[#3f3b54] bg-[#1d1b27] h-11 px-4 text-sm"
+              >
+                <option value="all">Todos los programas</option>
+                {programas.map(programa => (
+                  <option key={programa.id} value={programa.id}>
+                    {programa.nombre}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Filter by Cuatrimestre */}
@@ -271,7 +281,7 @@ const StudentsDashboard = () => {
                 className="w-full form-input resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#252233] focus:ring-primary border border-[#3f3b54] bg-[#1d1b27] h-11 px-4 text-sm"
               >
                 <option value="all">Todos los cuatrimestres</option>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
+                {Array.from({ length: getMaxCuatrimestre() }, (_, i) => i + 1).map(num => (
                   <option key={num} value={num}>{num}° Cuatrimestre</option>
                 ))}
               </select>
@@ -281,49 +291,50 @@ const StudentsDashboard = () => {
             <div className="flex items-end">
               <button
                 onClick={handleClearFilters}
-                className="flex items-center justify-center gap-2 rounded-lg h-11 px-4 bg-transparent text-[#a19cba] font-medium border border-white/10 hover:border-[#a19cba] hover:text-white transition-all duration-200 w-full lg:w-auto"
+                disabled={searching}
+                className="flex items-center justify-center gap-2 rounded-lg h-11 px-4 bg-transparent text-[#a19cba] font-medium border border-white/10 hover:border-[#a19cba] hover:text-white transition-all duration-200 w-full lg:w-auto disabled:opacity-50"
               >
-                <Icon name="refresh" />
+                <Icon name="refresh" className={searching ? "animate-spin" : ""} />
                 <span>Limpiar</span>
               </button>
             </div>
           </div>
 
           {/* Active filters indicator */}
-          {(searchMatricula || filterCuatrimestre !== 'all') && (
+          {(filterPrograma !== 'all' || filterCuatrimestre !== 'all') && (
             <div className="mt-4 flex items-center gap-2 text-sm">
               <Icon name="filter_alt" className="text-primary" />
               <span className="text-[#a19cba]">
-                Mostrando {displayAlumnos.length} de {totalCount} estudiantes
+                Mostrando {displayAsignaturas.length} de {totalCount} asignaturas
               </span>
             </div>
           )}
         </div>
 
-        {/* Students Table */}
+        {/* Subjects Table */}
         <div className="mt-6 sm:mt-8 mx-4 sm:mx-6 rounded-xl border border-white/10 bg-[#252233] p-4 sm:p-6">
-          <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4">Registered Students</h3>
+          <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4">Registered Subjects</h3>
           
-          {loading ? (
+          {loading || searching ? (
             <div className="flex items-center justify-center py-12">
               <Icon name="sync" className="animate-spin text-primary text-4xl" />
-              <span className="ml-3 text-white/60">Loading students...</span>
+              <span className="ml-3 text-white/60">Loading subjects...</span>
             </div>
-          ) : displayAlumnos.length === 0 ? (
+          ) : displayAsignaturas.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
-              <Icon name="group" className="text-white/20 text-6xl mb-4" />
+              <Icon name="import_contacts" className="text-white/20 text-6xl mb-4" />
               <p className="text-white/60 text-lg">
-                {searchMatricula || filterCuatrimestre !== 'all' 
-                  ? 'No se encontraron estudiantes con los criterios de búsqueda'
-                  : 'No students registered yet'
+                {(filterPrograma !== 'all' || filterCuatrimestre !== 'all')
+                  ? 'No se encontraron asignaturas con los criterios de búsqueda'
+                  : 'No subjects registered yet'
                 }
               </p>
-              {!searchMatricula && filterCuatrimestre === 'all' && (
+              {filterPrograma === 'all' && filterCuatrimestre === 'all' && (
                 <Link
-                  to="/students/register"
+                  to="/subjects/create"
                   className="mt-4 text-primary hover:text-primary/80 transition-colors"
                 >
-                  Register your first student
+                  Create your first subject
                 </Link>
               )}
             </div>
@@ -332,51 +343,48 @@ const StudentsDashboard = () => {
               <table className="w-full min-w-[640px]">
                 <thead>
                   <tr className="border-b border-white/10">
-                    <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 pl-4 sm:pl-0">Name</th>
-                    <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3">Enrollment</th>
-                    <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 hidden lg:table-cell">Semester</th>
-                    <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 hidden md:table-cell">Registered</th>
+                    <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 pl-4 sm:pl-0">Subject Name</th>
+                    <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3">Semester</th>
+                    <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 hidden lg:table-cell">Study Program</th>
+                    <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 hidden md:table-cell">Created</th>
                     <th className="text-left text-xs sm:text-sm font-medium text-[#a19cba] pb-3 pr-4 sm:pr-0">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {displayAlumnos.map((alumno) => (
-                    <tr key={alumno.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                  {displayAsignaturas.map((asignatura) => (
+                    <tr key={asignatura.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                       <td className="py-3 sm:py-4 text-white text-xs sm:text-sm font-medium pl-4 sm:pl-0">
-                        <div className="flex items-center gap-2">
-                          <Icon name="person" className="text-primary" />
-                          {alumno.nombre}
-                        </div>
+                        {asignatura.nombre}
                       </td>
-                      <td className="py-3 sm:py-4 text-[#a19cba] text-xs sm:text-sm">{alumno.matricula}</td>
-                      <td className="py-3 sm:py-4 text-white text-xs sm:text-sm hidden lg:table-cell">
-                        <span className="bg-purple-500/20 text-purple-400 px-2 py-1 rounded text-xs">
-                          {alumno.cuatrimestreActual}°
-                        </span>
+                      <td className="py-3 sm:py-4 text-white text-xs sm:text-sm">
+                        {asignatura.cuatrimestre}°
+                      </td>
+                      <td className="py-3 sm:py-4 text-[#a19cba] text-xs sm:text-sm hidden lg:table-cell">
+                        {getProgramaName(asignatura.programaEstudioId)}
                       </td>
                       <td className="py-3 sm:py-4 text-[#a19cba] text-xs sm:text-sm hidden md:table-cell">
-                        {new Date(alumno.createdAt).toLocaleDateString()}
+                        {new Date(asignatura.createdAt).toLocaleDateString()}
                       </td>
                       <td className="py-3 sm:py-4 pr-4 sm:pr-0">
                         <div className="flex items-center gap-2">
                           <button 
-                            onClick={() => handleViewDetails(alumno)}
+                            onClick={() => handleViewDetails(asignatura)}
                             className="text-white/70 hover:text-primary transition-colors"
                             title="View details"
                           >
                             <Icon name="visibility" className="text-base" />
                           </button>
                           <button 
-                            onClick={() => handleEditClick(alumno)}
+                            onClick={() => handleEditClick(asignatura)}
                             className="text-white/70 hover:text-blue-500 transition-colors"
-                            title="Edit student"
+                            title="Edit subject"
                           >
                             <Icon name="edit" className="text-base" />
                           </button>
                           <button 
-                            onClick={() => handleDeleteClick(alumno)}
+                            onClick={() => handleDeleteClick(asignatura)}
                             className="text-white/70 hover:text-red-500 transition-colors"
-                            title="Delete student"
+                            title="Delete subject"
                           >
                             <Icon name="delete" className="text-base" />
                           </button>
@@ -394,4 +402,4 @@ const StudentsDashboard = () => {
   );
 };
 
-export default StudentsDashboard;
+export default SubjectsDashboard;

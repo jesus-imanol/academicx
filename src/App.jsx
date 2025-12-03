@@ -1,18 +1,22 @@
 import { BrowserRouter, Routes, Route} from "react-router"
 import './App.css'
 import HomeView from "./pages/HomeView"
-import { CreateStudyProgramPage } from "./features/study-programs"
-import { CreateSubjectPage } from "./features/subjects"
+import { CreateStudyProgramPage, StudyProgramsDashboard } from "./features/study-programs"
+import { CreateSubjectPage, SubjectsDashboard } from "./features/subjects"
 import { RegisterTeacherPage, TeachersDashboard } from "./features/teachers"
 import { CreateGroupPage, GroupsDashboard } from "./features/groups"
 import { RegisterStudentPage, StudentsDashboard } from "./features/students"
+import ConnectionTest from "./components/dev/ConnectionTest"
 
 function App() {
   return (
     <BrowserRouter>
+      <ConnectionTest />
       <Routes>
         <Route path="/" element={<HomeView />} />
+        <Route path="/study-programs" element={<StudyProgramsDashboard />} />
         <Route path="/study-programs/create" element={<CreateStudyProgramPage />} />
+        <Route path="/subjects" element={<SubjectsDashboard />} />
         <Route path="/subjects/create" element={<CreateSubjectPage />} />
         <Route path="/teachers/register" element={<RegisterTeacherPage />} />
         <Route path="/teachers/dashboard" element={<TeachersDashboard />} />

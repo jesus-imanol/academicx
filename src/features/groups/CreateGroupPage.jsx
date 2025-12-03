@@ -1,32 +1,54 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import AdminLayout from '../../layouts/AdminLayout';
 import Icon from '../../components/atoms/Icon';
+import ConfirmDialog from '../../components/molecules/ConfirmDialog';
+import { useGrupos } from '../../hooks/useGrupos';
+import { useAsignaturas } from '../../hooks/useAsignaturas';
+import { useDocentes } from '../../hooks/useDocentes';
+import { useAlumnos } from '../../hooks/useAlumnos';
 
 const CreateGroupPage = () => {
+  const navigate = useNavigate();
+  const { createGrupo, loading } = useGrupos();
+  const { asignaturas, fetchAsignaturas } = useAsignaturas();
+  const { docentes, fetchDocentes } = useDocentes();
+  const { alumnos, fetchAlumnos } = useAlumnos();
+  const [showConfirm, setShowConfirm] = useState(false);
+
   const [formData, setFormData] = useState({
-    groupName: '',
-    subject: '',
-    teacher: '',
-    studentSearch: ''
+    nombre: '',
+    asignaturaId: '',
+    docenteId: '',
+    alumnoIds: []
   });
 
-  const [selectedStudents, setSelectedStudents] = useState([
-    {
-      id: 1,
-      name: 'Olivia Martin',
-      avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCERGpDvM5uKtVb927EKQKPWiyF-ZKIGSfGhv6trmmPInuxODehRJrIErfodGD-y8wHP32zcWcFhbSANcGdIsBb7XysV_TlJShqYD5BgeJXphBnQmVil6rLlccPzPUAHos_aQyvMNwSjj6jabTKnRUzXORagZ0KxghI7A4gpR3inNxYmWSTbO5ZPd5V7cHZje-a5Jz8rB9wjj4Ff6DUwfIWqA8MoHPtIrofPKiTR4sseCYznxEfDkX1I81XX_sp2lagST0PjCKMYnU'
-    },
-    {
-      id: 2,
-      name: 'Liam Johnson',
-      avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCSvnye_YYW2JQgDtltNCYgSnh1ggYD0mIylY2MOL5DDBZ6E1qmJ7U6CEjoHu7yVv7UEefNT61LbwZYxAXIbf0Ub-0X39WfCGiPJ02UFW_3Ct_tWNtv-ppPyXf3DCM2X31hs1aTct8YSWU6c4tEXBm0FNdKCvrDgdbQsg9n6Td36xr540A8O5de3S1jh1Re2b7QWSpSHsqGqraK2_AcuVq9RWSN8vTbDW4xINGbhXTd0tDf6qtD95_jT2JajL7P-CgYYnkt9eHtUgM'
-    },
-    {
-      id: 3,
-      name: 'Ava Williams',
-      avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDUUkXi47Bli3zO11dVCtZEZyt4U5W-2jI6Gh6bZZGQ0I8uC7AU4ZAzxPBs_uMgeaEj1Pk0kSR5zz3TAMgEgljLmGmF4mMDvOK8HI_aCGha3rgklcsGrTItlcMvcsiqKR3_-ia9F0xyq4lP-q0TSUCXk5il8WM4SCMVga6ryoyJ017niA1NVYSm1f1VgW2o4M_PL9WAEB4oFa7LRx0yqvoP1GGVIIcPeu12cQQcEVaNntK-HLDppUcNocW-iPn-ccVMQRaDYHD-wTM'
+  // Docentes filtrados por competencia
+  const [docentesCompetentes, setDocentesCompetentes] = useState([]);
+
+  useEffect(() => {
+    fetchAsignaturas();
+    fetchDocentes();
+    fetchAlumnos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    // Filtrar docentes que tienen competencia en la asignatura seleccionada
+    if (formData.asignaturaId && docentes.length > 0) {
+      const competentes = docentes.filter(docente =>
+        docente.asignaturasCompetencia?.some(asig => asig.id === formData.asignaturaId)
+      );
+      setDocentesCompetentes(competentes);
+
+      // Si el docente actual no tiene competencia, resetear
+      if (!competentes.some(d => d.id === formData.docenteId)) {
+        setFormData(prev => ({ ...prev, docenteId: '' }));
+      }
+    } else {
+      setDocentesCompetentes([]);
     }
-  ]);
+  }, [formData.asignaturaId, formData.docenteId, docentes]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -36,164 +58,260 @@ const CreateGroupPage = () => {
     }));
   };
 
-  const handleRemoveStudent = (studentId) => {
-    setSelectedStudents(prev => prev.filter(student => student.id !== studentId));
+  const toggleAlumno = (alumnoId) => {
+    setFormData(prev => ({
+      ...prev,
+      alumnoIds: prev.alumnoIds.includes(alumnoId)
+        ? prev.alumnoIds.filter(id => id !== alumnoId)
+        : [...prev.alumnoIds, alumnoId]
+    }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', { ...formData, students: selectedStudents });
-    // Aquí iría la lógica para enviar los datos al backend
+
+    if (!formData.nombre.trim() || !formData.asignaturaId || !formData.docenteId) {
+      return;
+    }
+
+    try {
+      const grupoData = {
+        nombre: formData.nombre.trim(),
+        asignaturaId: formData.asignaturaId,
+        docenteId: formData.docenteId,
+        alumnoIds: formData.alumnoIds
+      };
+
+      const result = await createGrupo(grupoData);
+
+      if (result.success) {
+        // Limpiar formulario
+        setFormData({
+          nombre: '',
+          asignaturaId: '',
+          docenteId: '',
+          alumnoIds: []
+        });
+
+        // Preguntar si desea crear otro grupo
+        setTimeout(() => {
+          setShowConfirm(true);
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Error al crear grupo:', error);
+    }
   };
+
+  const handleConfirmCreateAnother = () => {
+    setShowConfirm(false);
+  };
+
+  const handleCancelCreateAnother = () => {
+    setShowConfirm(false);
+    navigate('/groups');
+  };
+
+  const handleCancel = () => {
+    navigate('/groups');
+  };
+
+  const selectedAsignatura = asignaturas.find(a => a.id === formData.asignaturaId);
 
   return (
-    <AdminLayout activeNavItem="groups">
-      <div className="max-w-4xl mx-auto p-8">
-        {/* Breadcrumbs */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          <a className="text-[#a19cba] text-base font-medium leading-normal hover:text-white transition-colors" href="#">
-            Dashboard
-          </a>
-          <span className="text-[#a19cba] text-base font-medium leading-normal">/</span>
-          <a className="text-[#a19cba] text-base font-medium leading-normal hover:text-white transition-colors" href="#">
-            Groups
-          </a>
-          <span className="text-[#a19cba] text-base font-medium leading-normal">/</span>
-          <span className="text-white text-base font-medium leading-normal">Create New Group</span>
-        </div>
+    <>
+      <ConfirmDialog
+        isOpen={showConfirm}
+        onConfirm={handleConfirmCreateAnother}
+        onCancel={handleCancelCreateAnother}
+        type="success"
+        title="Group Created!"
+        message="¿Deseas crear otro grupo?"
+        confirmText="Sí, crear otro"
+        cancelText="No, ir al dashboard"
+      />
 
-        {/* Page Heading */}
-        <div className="flex flex-wrap justify-between gap-3 mb-8">
-          <div className="flex min-w-72 flex-col gap-3">
-            <p className="text-white text-4xl font-black leading-tight tracking-[-0.033em]">
+      <AdminLayout activeNavItem="groups">
+        {/* Page Header */}
+        <div className="flex flex-wrap justify-between gap-3 p-4 sm:p-6">
+          <div className="flex flex-col gap-2 min-w-0">
+            <p className="text-white text-2xl sm:text-3xl lg:text-4xl font-black leading-tight tracking-[-0.033em]">
               Create New Group
             </p>
-            <p className="text-[#a19cba] text-base font-normal leading-normal">
-              Fill in the details below to create a new group for a subject.
+            <p className="text-[#a19cba] text-sm sm:text-base font-normal leading-normal">
+              Fill in the details to create a new group with subject, teacher and students.
             </p>
           </div>
         </div>
 
-        {/* Form Card */}
-        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-8">
-          <form className="space-y-8" onSubmit={handleSubmit}>
-            {/* Group Name */}
-            <div className="flex flex-col">
-              <label className="text-white text-base font-medium leading-normal pb-2" htmlFor="group-name">
-                Group Name
-              </label>
-              <input
-                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-offset-2 focus:ring-offset-background-dark focus:ring-primary border border-[#3f3b54] bg-[#1d1b27] h-14 placeholder:text-[#a19cba] px-4 py-3 text-base font-normal leading-normal"
-                id="group-name"
-                name="groupName"
-                placeholder="e.g., Fall 2024 - Section A"
-                value={formData.groupName}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            {/* Select Subject */}
-            <div className="flex flex-col">
-              <label className="text-white text-base font-medium leading-normal pb-2" htmlFor="select-subject">
-                Select Subject
-              </label>
-              <div className="relative">
-                <span className="material-symbols-outlined absolute top-1/2 -translate-y-1/2 left-4 text-[#a19cba]">
-                  search
-                </span>
+        {/* Form Container */}
+        <div className="px-4 sm:px-6 pb-6 sm:pb-8">
+          <div className="max-w-4xl mx-auto bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 sm:p-8 space-y-6 sm:space-y-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Group Name */}
+              <div>
+                <label className="text-white text-sm font-medium mb-2 block">
+                  Group Name *
+                </label>
                 <input
-                  className="form-input pl-12 flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-offset-2 focus:ring-offset-background-dark focus:ring-primary border border-[#3f3b54] bg-[#1d1b27] h-14 placeholder:text-[#a19cba] pr-4 py-3 text-base font-normal leading-normal"
-                  id="select-subject"
-                  name="subject"
-                  placeholder="Search and select a subject"
-                  value={formData.subject}
+                  type="text"
+                  name="nombre"
+                  value={formData.nombre}
                   onChange={handleInputChange}
+                  className="w-full h-12 sm:h-14 bg-[#1d1b27] border border-[#3f3b54] rounded-lg px-4 text-white placeholder-[#a19cba] focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  placeholder="e.g., 9A or Group A"
+                  required
                 />
+                <p className="text-[#a19cba] text-xs mt-1.5">
+                  Enter a unique identifier for this group
+                </p>
               </div>
-            </div>
 
-            {/* Assign Teacher */}
-            <div className="flex flex-col">
-              <label className="text-white text-base font-medium leading-normal pb-2" htmlFor="assign-teacher">
-                Assign Teacher
-              </label>
-              <div className="relative">
-                <span className="material-symbols-outlined absolute top-1/2 -translate-y-1/2 left-4 text-[#a19cba]">
-                  school
-                </span>
-                <input
-                  className="form-input pl-12 flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-offset-2 focus:ring-offset-background-dark focus:ring-primary border border-[#3f3b54] bg-[#1d1b27] h-14 placeholder:text-[#a19cba] pr-4 py-3 text-base font-normal leading-normal"
-                  id="assign-teacher"
-                  name="teacher"
-                  placeholder="Search for a teacher by name or email"
-                  value={formData.teacher}
+              {/* Subject */}
+              <div>
+                <label className="text-white text-sm font-medium mb-2 block">
+                  Subject *
+                </label>
+                <select
+                  name="asignaturaId"
+                  value={formData.asignaturaId}
                   onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            {/* Add Students */}
-            <div className="flex flex-col space-y-4">
-              <label className="text-white text-base font-medium leading-normal">
-                Add Students
-              </label>
-              <div className="bg-[#1d1b27] border border-[#3f3b54] rounded-lg p-4">
-                <div className="relative mb-4">
-                  <span className="material-symbols-outlined absolute top-1/2 -translate-y-1/2 left-4 text-[#a19cba]">
-                    person_add
-                  </span>
-                  <input
-                    className="form-input pl-12 flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1d1b27] focus:ring-primary border border-[#3f3b54] bg-[#131022] h-12 placeholder:text-[#a19cba] pr-4 py-3 text-sm"
-                    name="studentSearch"
-                    placeholder="Search students to add..."
-                    value={formData.studentSearch}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="min-h-[80px] space-x-2 space-y-2">
-                  {selectedStudents.map((student) => (
-                    <span
-                      key={student.id}
-                      className="inline-flex items-center gap-2 bg-[#2b2839] text-white text-sm font-medium px-3 py-1.5 rounded-full"
-                    >
-                      <div
-                        className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-6"
-                        style={{ backgroundImage: `url("${student.avatar}")` }}
-                        aria-label={`Avatar of ${student.name}`}
-                      />
-                      {student.name}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveStudent(student.id)}
-                        className="text-[#a19cba] hover:text-white transition-colors"
-                      >
-                        <Icon name="close" className="!text-base" />
-                      </button>
-                    </span>
+                  className="w-full h-12 sm:h-14 bg-[#1d1b27] border border-[#3f3b54] rounded-lg px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  required
+                >
+                  <option value="">Select a subject</option>
+                  {asignaturas.map((asignatura) => (
+                    <option key={asignatura.id} value={asignatura.id}>
+                      {asignatura.nombre} - Semester {asignatura.cuatrimestre}
+                    </option>
                   ))}
-                </div>
+                </select>
+                <p className="text-[#a19cba] text-xs mt-1.5">
+                  Choose the subject this group will study
+                </p>
               </div>
-            </div>
 
-            {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-4 pt-4">
-              <button
-                type="button"
-                className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-transparent text-[#a19cba] text-base font-bold leading-normal tracking-[0.015em] border border-transparent hover:border-[#a19cba] transition-colors duration-200"
-              >
-                <span className="truncate">Cancel</span>
-              </button>
-              <button
-                type="submit"
-                className="relative flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-linear-to-r from-[#2563eb] to-[#3b82f6] text-white text-base font-bold leading-normal tracking-[0.015em] hover:from-[#1d4ed8] hover:to-[#2563eb] hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300"
-              >
-                <span className="truncate">Create Group</span>
-              </button>
-            </div>
-          </form>
+              {/* Teacher */}
+              <div>
+                <label className="text-white text-sm font-medium mb-2 block">
+                  Assign Teacher *
+                </label>
+                <select
+                  name="docenteId"
+                  value={formData.docenteId}
+                  onChange={handleInputChange}
+                  disabled={!formData.asignaturaId}
+                  className="w-full h-12 sm:h-14 bg-[#1d1b27] border border-[#3f3b54] rounded-lg px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                  required
+                >
+                  <option value="">
+                    {!formData.asignaturaId ? 'Select a subject first' : 'Select a teacher'}
+                  </option>
+                  {docentesCompetentes.map((docente) => (
+                    <option key={docente.id} value={docente.id}>
+                      {docente.nombre}
+                    </option>
+                  ))}
+                </select>
+                {formData.asignaturaId && docentesCompetentes.length === 0 && (
+                  <p className="text-yellow-400 text-xs mt-2 flex items-center gap-1">
+                    <Icon name="warning" className="text-sm" />
+                    No teachers have competency in "{selectedAsignatura?.nombre}"
+                  </p>
+                )}
+                {formData.asignaturaId && docentesCompetentes.length > 0 && (
+                  <p className="text-[#a19cba] text-xs mt-1.5">
+                    {docentesCompetentes.length} qualified teacher(s) available for this subject
+                  </p>
+                )}
+              </div>
+
+              {/* Enroll Students */}
+              <div>
+                <label className="text-white text-sm font-medium mb-2 block">
+                  Enroll Students (Optional)
+                </label>
+                <p className="text-[#a19cba] text-xs mb-3">
+                  Select students to enroll in this group
+                </p>
+
+                {alumnos.length === 0 ? (
+                  <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                    <p className="text-[#a19cba] text-sm text-center">
+                      No students available
+                    </p>
+                  </div>
+                ) : (
+                  <div className="max-h-80 overflow-y-auto bg-[#1d1b27] border border-[#3f3b54] rounded-lg p-4 space-y-2">
+                    {alumnos.map((alumno) => (
+                      <label
+                        key={alumno.id}
+                        className="flex items-center gap-3 p-2 hover:bg-white/5 rounded cursor-pointer transition-colors"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={formData.alumnoIds.includes(alumno.id)}
+                          onChange={() => toggleAlumno(alumno.id)}
+                          className="w-4 h-4 rounded border-[#3f3b54] bg-[#252233] text-primary focus:ring-primary focus:ring-offset-0"
+                        />
+                        <div className="flex-1">
+                          <p className="text-white text-sm">{alumno.nombre}</p>
+                          <p className="text-[#a19cba] text-xs">
+                            {alumno.matricula} • Semester {alumno.cuatrimestreActual}
+                          </p>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                )}
+
+                {formData.alumnoIds.length > 0 && (
+                  <div className="mt-3 bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 flex items-start gap-2">
+                    <Icon name="info" className="text-blue-400 text-xl shrink-0" />
+                    <p className="text-blue-400 text-sm">
+                      <strong>{formData.alumnoIds.length}</strong> student(s) will be enrolled in this group
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  className="w-full sm:w-auto order-2 sm:order-1 px-6 py-3 rounded-lg border border-white/10 text-white hover:bg-white/5 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading || !formData.nombre.trim() || !formData.asignaturaId || !formData.docenteId}
+                  className="w-full sm:flex-1 order-1 sm:order-2 px-6 py-3 rounded-lg text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                  style={{
+                    background: loading || !formData.nombre.trim() || !formData.asignaturaId || !formData.docenteId
+                      ? '#3f3b54'
+                      : 'linear-gradient(to right, #2563eb, #3b82f6)'
+                  }}
+                >
+                  {loading ? (
+                    <>
+                      <Icon name="sync" className="animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <Icon name="check_circle" />
+                      Create Group
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </div>
-    </AdminLayout>
+      </AdminLayout>
+    </>
   );
 };
 

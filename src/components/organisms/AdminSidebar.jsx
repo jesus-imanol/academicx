@@ -1,18 +1,51 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import Icon from '../atoms/Icon';
 
 const AdminSidebar = ({ activeItem = 'dashboard' }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleSidebar = () => setIsOpen(!isOpen);
+  const closeSidebar = () => setIsOpen(false);
   const navItems = [
-    { id: 'dashboard', icon: 'dashboard', label: 'Dashboard', href: '/admin/dashboard' },
-    { id: 'courses', icon: 'import_contacts', label: 'Courses', href: '/admin/courses' },
+    { id: 'dashboard', icon: 'dashboard', label: 'Dashboard', href: '/' },
+    { id: 'students', icon: 'person', label: 'Students', href: '/students/dashboard' },
+    { id: 'study-programs', icon: 'school', label: 'Study Programs', href: '/study-programs' },
+    { id: 'subjects', icon: 'import_contacts', label: 'Subjects', href: '/subjects' },
     { id: 'groups', icon: 'group', label: 'Groups', href: '/groups/dashboard', filled: true },
-    { id: 'teachers', icon: 'school', label: 'Teachers', href: '/teachers/dashboard' },
-    { id: 'students', icon: 'person', label: 'Students', href: '/students/dashboard' }
+    { id: 'teachers', icon: 'school', label: 'Teachers', href: '/teachers/dashboard' }
   ];
 
   return (
-    <aside className="flex h-screen min-w-64 max-w-64 flex-col border-r border-white/10 bg-linear-to-b from-[#0f1729] via-[#1a2744] to-[#0f1729] p-4 sticky top-0">
+    <>
+      {/* Hamburger Button - Mobile Only */}
+      <button
+        onClick={toggleSidebar}
+        className="lg:hidden fixed top-4 left-4 z-50 flex items-center justify-center w-10 h-10 rounded-lg bg-[#1a2744] border border-white/10 text-white hover:bg-[#2b2839] transition-colors"
+        aria-label="Toggle menu"
+      >
+        <Icon name={isOpen ? 'close' : 'menu'} />
+      </button>
+
+      {/* Overlay - Mobile Only */}
+      {isOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
+          onClick={closeSidebar}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside className={`
+        flex h-screen min-w-64 max-w-64 flex-col border-r border-white/10 
+        bg-linear-to-b from-[#0f1729] via-[#1a2744] to-[#0f1729] p-4
+        lg:sticky lg:top-0
+        fixed top-0 left-0 z-40
+        transform transition-transform duration-300 ease-in-out
+        ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
       <div className="flex h-full flex-col justify-between">
         {/* Top Section */}
         <div className="flex flex-col gap-4">
@@ -37,6 +70,7 @@ const AdminSidebar = ({ activeItem = 'dashboard' }) => {
               <Link
                 key={item.id}
                 to={item.href}
+                onClick={closeSidebar}
                 className={`flex items-center gap-3 px-3 py-2 transition-colors duration-200 ${
                   activeItem === item.id
                     ? 'rounded-lg bg-primary/20 text-white'
@@ -56,15 +90,17 @@ const AdminSidebar = ({ activeItem = 'dashboard' }) => {
         {/* Bottom Section */}
         <div className="flex flex-col gap-4">
           <Link
-            to="/admin/courses/create"
-            className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity"
+            to="/study-programs/create"
+            onClick={closeSidebar}
+            className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-linear-to-r from-[#2563eb] to-[#3b82f6] text-white text-sm font-bold leading-normal tracking-[0.015em] hover:from-[#1d4ed8] hover:to-[#2563eb] hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300"
           >
-            <span className="truncate">New Course</span>
+            <span className="truncate">New Program</span>
           </Link>
 
           <div className="flex flex-col gap-1 border-t border-white/10 pt-2">
             <Link
               to="/admin/settings"
+              onClick={closeSidebar}
               className="flex items-center gap-3 px-3 py-2 text-[#a19cba] hover:bg-[#2b2839] hover:text-white transition-colors duration-200"
             >
               <Icon name="settings" />
@@ -72,6 +108,7 @@ const AdminSidebar = ({ activeItem = 'dashboard' }) => {
             </Link>
             <Link
               to="/logout"
+              onClick={closeSidebar}
               className="flex items-center gap-3 px-3 py-2 text-[#a19cba] hover:bg-[#2b2839] hover:text-white transition-colors duration-200"
             >
               <Icon name="logout" />
@@ -81,6 +118,7 @@ const AdminSidebar = ({ activeItem = 'dashboard' }) => {
         </div>
       </div>
     </aside>
+    </>
   );
 };
 

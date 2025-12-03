@@ -1,15 +1,13 @@
 import PropTypes from 'prop-types';
-import SideNavBar from '../components/organisms/SideNavBar';
+import AdminSidebar from '../components/organisms/AdminSidebar';
 
 const MainLayout = ({ children, activeNavItem }) => {
   return (
-    <div className="flex min-h-screen">
-      <SideNavBar activeItem={activeNavItem} />
+    <div className="flex min-h-screen bg-[#131022]">
+      <AdminSidebar activeItem={activeNavItem} />
       
-      <main className="flex-1 p-8 md:p-12">
-        <div className="w-full max-w-6xl mx-auto">
-          {children}
-        </div>
+      <main className="flex-1">
+        {children}
       </main>
     </div>
   );
